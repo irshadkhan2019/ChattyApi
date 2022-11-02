@@ -9,7 +9,7 @@ const { config } = require("./config");
 const redis = require("redis");
 const redisAdapter = require("@socket.io/redis-adapter");
 const applicationRoutes = require("./routes");
-const HTTP_STATUS = require("http-status-code");
+const { StatusCodes } = require("http-status-codes");
 const { CustomError } = require("./shared/globals/helpers/error-handler");
 
 const SERVER_PORT = 4000;
@@ -61,7 +61,7 @@ class ChattyServer {
   globalErrorHandler(app) {
     //for unknow urls
     app.all("*", (req, res) => {
-      res.status(HTTP_STATUS.NOT_FOUND).json({
+      res.status(StatusCodes.NOT_FOUND).json({
         message: `${req.originalUrl} Not Found`,
       });
     });

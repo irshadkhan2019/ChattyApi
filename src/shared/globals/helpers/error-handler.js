@@ -1,4 +1,4 @@
-const HTTP_STATUS = require("http-status-code");
+const { StatusCodes } = require("http-status-codes");
 
 class CustomError extends Error {
   constructor(message) {
@@ -14,7 +14,7 @@ class CustomError extends Error {
 }
 
 class BadRequestError extends CustomError {
-  statusCode = HTTP_STATUS.BAD_REQUEST;
+  statusCode = StatusCodes.BAD_REQUEST;
   status = "error";
 
   constructor(message) {
@@ -23,7 +23,7 @@ class BadRequestError extends CustomError {
 }
 
 class JoiRequestValidationError extends CustomError {
-  statusCode = HTTP_STATUS.BAD_REQUEST;
+  statusCode = StatusCodes.BAD_REQUEST;
   status = "error";
 
   constructor(message) {
@@ -32,7 +32,7 @@ class JoiRequestValidationError extends CustomError {
 }
 
 class NotFoundError extends CustomError {
-  statusCode = HTTP_STATUS.NOT_FOUND;
+  statusCode = StatusCodes.NOT_FOUND;
   status = "error";
 
   constructor(message) {
@@ -41,7 +41,7 @@ class NotFoundError extends CustomError {
 }
 
 class NotAuthorizedError extends CustomError {
-  statusCode = HTTP_STATUS.UNAUTHORIZED;
+  statusCode = StatusCodes.UNAUTHORIZED;
   status = "error";
 
   constructor(message) {
@@ -50,7 +50,7 @@ class NotAuthorizedError extends CustomError {
 }
 
 class FileTooLargeError extends CustomError {
-  statusCode = HTTP_STATUS.REQUEST_TOO_LONG;
+  statusCode = StatusCodes.REQUEST_TOO_LONG;
   status = "error";
 
   constructor(message) {
@@ -59,7 +59,7 @@ class FileTooLargeError extends CustomError {
 }
 
 class ServerError extends CustomError {
-  statusCode = HTTP_STATUS.SERVICE_UNAVAILABLE;
+  statusCode = StatusCodes.SERVICE_UNAVAILABLE;
   status = "error";
 
   constructor(message) {
