@@ -15,6 +15,7 @@ class Application {
   loadConfig() {
     console.log("loading configuration file");
     config.validateConfig();
+    config.cloudinaryConfig();
   }
 }
 
