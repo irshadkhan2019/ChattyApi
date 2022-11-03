@@ -107,6 +107,7 @@ class ChattyServer {
       },
       password: config.REDIS_PASSWORD,
     });
+
     console.log("created Redis Client");
     const subClient = pubClient.duplicate();
 

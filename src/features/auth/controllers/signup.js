@@ -8,7 +8,9 @@ const Helpers = require("../../../shared/globals/helpers/helpers");
 const authService = require("../../../shared/services/db/auth.service");
 const ObjectID = require("mongodb").ObjectId;
 const { StatusCodes } = require("http-status-codes");
+const UserCache = require("../../../shared/services/redis/user.cache");
 
+const userCache = new UserCache();
 class SignUp {
   async create(req, res) {
     const { username, password, email, avatarColor, avatarImage } = req.body;
@@ -46,6 +48,12 @@ class SignUp {
       throw new BadRequestError("File upload error occured try again");
     }
     console.log(StatusCodes.CREATED);
+    //add User to redis cache
+    const userDataForCache = SignUp.prototype.userData(authData, userObjectId);
+    //set profile pic same as what we uploaded in cloudinary
+    userDataForCache.profilePicture = `https://res.cloudinary.com/dnslnpn4l/image/upload/v${result.version}/${userObjectId}`;
+    await userCache.saveUserToCache(`${userObjectId}`, uId, userDataForCache);
+    //send res to user
     res.status(200).json({ message: "user created successfully", authData });
   }
 
@@ -62,5 +70,44 @@ class SignUp {
       createdAt: new Date(),
     };
   }
+
+  //Creating user model data from auth data when user registers
+  userData(data, userObjectId) {
+    const { _id, username, email, uId, password, avatarColor } = data;
+    return {
+      _id: userObjectId,
+      authId: _id,
+      uId,
+      username: Helpers.firstLetterUppercase(username),
+      email,
+      password,
+      avatarColor,
+      profilePicture: "",
+      blocked: [],
+      blockedBy: [],
+      work: "",
+      location: "",
+      school: "",
+      quote: "",
+      bgImageVersion: "",
+      bgImageId: "",
+      followersCount: 0,
+      followingCount: 0,
+      postsCount: 0,
+      notifications: {
+        messages: true,
+        reactions: true,
+        comments: true,
+        follows: true,
+      },
+      social: {
+        facebook: "",
+        instagram: "",
+        twitter: "",
+        youtube: "",
+      },
+    };
+  }
+  //
 }
 module.exports = SignUp;
