@@ -9,6 +9,11 @@ const authService = require("../../../shared/services/db/auth.service");
 const ObjectID = require("mongodb").ObjectId;
 const { StatusCodes } = require("http-status-codes");
 const UserCache = require("../../../shared/services/redis/user.cache");
+const { omit } = require("lodash");
+const authQueue = require("../../../shared/services/queues/auth.queue");
+const userQueue = require("../../../shared/services/queues/user.queue");
+const JWT = require("jsonwebtoken");
+const { config } = require("../../../config");
 
 const userCache = new UserCache();
 class SignUp {
@@ -48,13 +53,55 @@ class SignUp {
       throw new BadRequestError("File upload error occured try again");
     }
     console.log(StatusCodes.CREATED);
+
     //add User to redis cache
     const userDataForCache = SignUp.prototype.userData(authData, userObjectId);
     //set profile pic same as what we uploaded in cloudinary
     userDataForCache.profilePicture = `https://res.cloudinary.com/dnslnpn4l/image/upload/v${result.version}/${userObjectId}`;
     await userCache.saveUserToCache(`${userObjectId}`, uId, userDataForCache);
+
+    //save user data to database
+    //In user collection dont add these fields while saving in db
+    omit(userDataForCache, [
+      "uId",
+      "username",
+      "email",
+      "avatarColor",
+      "password",
+    ]);
+
+    //add to Queue as an job so that worker can add this to db later
+    //auth and user collections are /filled with docs via the workers of the queues .
+    authQueue.addAuthUserJob("addAuthUserToDB", { value: userDataForCache });
+    userQueue.addUserJob("addUserToDB", { value: userDataForCache });
+
+    //create Token
+    const userJwt = SignUp.prototype.signToken(authData, userObjectId);
+    //add data to session
+    req.session = { jwt: userJwt };
     //send res to user
-    res.status(200).json({ message: "user created successfully", authData });
+
+    res
+      .status(200)
+      .json({
+        message: "user created successfully",
+        user: userDataForCache,
+        token: userJwt,
+      });
+  }
+
+  //create Token
+  signToken(data, userObjectId) {
+    return JWT.sign(
+      {
+        userId: userObjectId,
+        uId: data.uId,
+        email: data.email,
+        username: data.username,
+        avatarColor: data.avatarColor,
+      },
+      config.JWT_TOKEN
+    );
   }
 
   //transform data

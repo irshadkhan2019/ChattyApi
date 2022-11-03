@@ -2,6 +2,11 @@ const AuthModel = require("../../../features/auth/models/auth.schema");
 const Helpers = require("../../globals/helpers/helpers");
 
 class AuthService {
+  //creates document in auth collection
+  async createAuthUser(data) {
+    await AuthModel.create(data);
+  }
+
   async getUserByUsernameOrEmail(username, email) {
     const query = {
       $or: [
