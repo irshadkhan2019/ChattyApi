@@ -17,7 +17,7 @@ const { config } = require("../../../config");
 
 const userCache = new UserCache();
 class SignUp {
-  async create(req, res) {
+  async create(req, res, next) {
     console.log(req.body);
     const { username, password, email, avatarColor, avatarImage } = req.body;
 
@@ -27,7 +27,7 @@ class SignUp {
     );
 
     if (checkIfUserExist) {
-      throw new BadRequestError("Invalid Credentials");
+      return next(new BadRequestError("User Already exists"));
     }
 
     //generate our own _id for doc instead of mongodb generating it
@@ -51,7 +51,7 @@ class SignUp {
 
     //if uploads fails we don't get public_id
     if (!result?.public_id) {
-      throw new BadRequestError("File upload error occured try again");
+      return next(new BadRequestError("File upload error occured try again"));
     }
     console.log(StatusCodes.CREATED);
 

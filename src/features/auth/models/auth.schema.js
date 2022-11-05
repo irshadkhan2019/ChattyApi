@@ -11,6 +11,8 @@ const authSchema = new mongoose.Schema(
     password: { type: String },
     avatarColor: { type: String },
     createdAt: { type: Date, default: Date.now },
+    passwordResetToken: { type: String, default: "" },
+    passwordResetExpires: { type: Number },
   },
   {
     //in option we tell while retrieving doc dont send password field .

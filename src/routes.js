@@ -2,6 +2,7 @@ const authRoutes = require("./features/auth/routes/authRoutes");
 const currentUserRoutes = require("./features/auth/routes/currentRoutes");
 const authMiddleware = require("./shared/globals/helpers/auth-middleware");
 const { serverAdapter } = require("./shared/services/queues/base.queue");
+const express = require("express");
 
 const BASE_PATH = "/api/v1";
 const applicationRoutes = (app) => {

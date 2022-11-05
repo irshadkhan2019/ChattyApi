@@ -2,8 +2,10 @@ const { StatusCodes } = require("http-status-codes");
 
 class CustomError extends Error {
   constructor(message) {
+    console.log("  CustomError extends Error");
     super(message);
   }
+
   serializeErrors() {
     return {
       message: this.message,
@@ -18,6 +20,7 @@ class BadRequestError extends CustomError {
   status = "error";
 
   constructor(message) {
+    console.log(" BadRequestError extends CustomError ");
     super(message);
   }
 }

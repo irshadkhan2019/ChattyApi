@@ -7,6 +7,16 @@ class AuthService {
     await AuthModel.create(data);
   }
 
+  async updatePasswordToken(authId, token, tokenExpiration) {
+    await AuthModel.updateOne(
+      { _id: authId },
+      {
+        passwordResetToken: token,
+        passwordResetExpires: tokenExpiration,
+      }
+    );
+  }
+
   async getUserByUsernameOrEmail(username, email) {
     const query = {
       $or: [
@@ -21,6 +31,20 @@ class AuthService {
   async getAuthUserByUsername(username) {
     const user = await AuthModel.findOne({
       username: Helpers.firstLetterUppercase(username),
+    }).exec();
+    return user;
+  }
+  async getAuthUserByEmail(email) {
+    const user = await AuthModel.findOne({
+      email: Helpers.lowerCase(email),
+    }).exec();
+    return user;
+  }
+
+  async getAuthUserByPasswordToken(token) {
+    const user = await AuthModel.findOne({
+      passwordResetToken: token,
+      passwordResetExpires: { $gt: Date.now() },
     }).exec();
     return user;
   }

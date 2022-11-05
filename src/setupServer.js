@@ -67,11 +67,12 @@ class ChattyServer {
     });
 
     //Global error handler
-    app.use((err, req, res) => {
-      console.log(err);
+    app.use((err, req, res, next) => {
+      console.log("reached GLOBAL ERROR HANDLER:::::", err);
       if (err instanceof CustomError) {
         return res.status(err.statusCode).json(err.serializeErrors());
       }
+      next();
     });
   }
 
