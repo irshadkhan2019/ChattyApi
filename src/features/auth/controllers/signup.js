@@ -18,6 +18,7 @@ const { config } = require("../../../config");
 const userCache = new UserCache();
 class SignUp {
   async create(req, res) {
+    console.log(req.body);
     const { username, password, email, avatarColor, avatarImage } = req.body;
 
     const checkIfUserExist = await authService.getUserByUsernameOrEmail(
@@ -29,7 +30,7 @@ class SignUp {
       throw new BadRequestError("Invalid Credentials");
     }
 
-    //generate our own _id for doc instead of mogodb generating it
+    //generate our own _id for doc instead of mongodb generating it
     const authObjectId = new ObjectID();
     const userObjectId = new ObjectID();
     const uId = `${Helpers.generateRandomIntegers(12)}`;
@@ -72,7 +73,7 @@ class SignUp {
 
     //add to Queue as an job so that worker can add this to db later
     //auth and user collections are /filled with docs via the workers of the queues .
-    authQueue.addAuthUserJob("addAuthUserToDB", { value: userDataForCache });
+    authQueue.addAuthUserJob("addAuthUserToDB", { value: authData });
     userQueue.addUserJob("addUserToDB", { value: userDataForCache });
 
     //create Token
@@ -81,13 +82,11 @@ class SignUp {
     req.session = { jwt: userJwt };
     //send res to user
 
-    res
-      .status(200)
-      .json({
-        message: "user created successfully",
-        user: userDataForCache,
-        token: userJwt,
-      });
+    res.status(StatusCodes.CREATED).json({
+      message: "user created successfully",
+      user: userDataForCache,
+      token: userJwt,
+    });
   }
 
   //create Token

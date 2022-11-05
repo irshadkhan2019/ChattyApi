@@ -12,7 +12,7 @@ const applicationRoutes = require("./routes");
 const { StatusCodes } = require("http-status-codes");
 const { CustomError } = require("./shared/globals/helpers/error-handler");
 
-const SERVER_PORT = 4000;
+const SERVER_PORT = 5000;
 
 class ChattyServer {
   constructor(app) {
@@ -105,7 +105,7 @@ class ChattyServer {
         host: config.REDIS_HOST,
         port: config.REDIS_PORT,
       },
-      password: config.REDIS_PASSWORD,
+      // password: config.REDIS_PASSWORD,
     });
 
     console.log("created Redis Client");

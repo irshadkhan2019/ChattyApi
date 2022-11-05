@@ -14,8 +14,14 @@ class AuthService {
         { email: Helpers.lowerCase(email) },
       ],
     };
-
     const user = await AuthModel.findOne(query).exec();
+    return user;
+  }
+  //
+  async getAuthUserByUsername(username) {
+    const user = await AuthModel.findOne({
+      username: Helpers.firstLetterUppercase(username),
+    }).exec();
     return user;
   }
 }

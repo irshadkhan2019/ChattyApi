@@ -10,6 +10,7 @@ class UserQueue extends BaseQueue {
   }
 
   //THis method adds Job to Queue
+
   addUserJob(name, data) {
     console.log("adding this to Q ", data);
     this.addJob(name, data);

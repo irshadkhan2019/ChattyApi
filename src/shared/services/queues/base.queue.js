@@ -54,6 +54,7 @@ class BaseQueue {
   //method to process Job from queue ,the callback fn does the processing .
   //takes concurrency no of jobs to process at a time
   processJob(name, concurrency, callback) {
+    //callback fn is called by passing the job and done callnack fn to it .
     this.queue.process(name, concurrency, callback);
   }
 }

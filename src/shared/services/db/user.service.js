@@ -1,9 +1,76 @@
+const { mongoose } = require("mongoose");
 const UserModel = require("../../../features/user/models/user.schema");
 
 class UserService {
   //creates document in auth collection
   async addUserData(data) {
     await UserModel.create(data);
+  }
+
+  async getUserById(userId) {
+    const users = await UserModel.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(userId) } },
+      {
+        $lookup: {
+          // like populate it returns array containing all fields
+          //from Auth model which have id same as users authId and
+          // that array will be named as authId
+          from: "Auth",
+          localField: "authId",
+          foreignField: "_id",
+          as: "authId",
+        },
+      },
+      { $unwind: "$authId" }, // all elements from array created via above lookup are
+      //added as an object in authId field  .
+      { $project: this.aggregateProject() },
+    ]);
+
+    return users[0];
+  }
+  //
+  async getUserByAuthId(authId) {
+    const users = await UserModel.aggregate([
+      { $match: { authId: new mongoose.Types.ObjectId(authId) } },
+      // {
+      //   $lookup: {
+      //     from: "Auth",
+      //     localField: "authId",
+      //     foreignField: "_id",
+      //     as: "authId",
+      //   },
+      // },
+      // { $unwind: "$authId" },
+      // { $project: this.aggregateProject() },
+    ]);
+
+    console.log("From user service ", authId, users);
+    return users[0];
+  }
+
+  aggregateProject() {
+    return {
+      _id: 1,
+      username: "$authId.username",
+      uId: "$authId.uId",
+      email: "$authId.email",
+      avatarColor: "$authId.avatarColor",
+      createdAt: "$authId.createdAt",
+      postsCount: 1,
+      work: 1,
+      school: 1,
+      quote: 1,
+      location: 1,
+      blocked: 1,
+      blockedBy: 1,
+      followersCount: 1,
+      followingCount: 1,
+      notifications: 1,
+      social: 1,
+      bgImageVersion: 1,
+      bgImageId: 1,
+      profilePicture: 1,
+    };
   }
 }
 const userService = new UserService();

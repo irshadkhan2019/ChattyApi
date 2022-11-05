@@ -4,6 +4,7 @@ const authService = require("../services/db/auth.service");
 
 //consumer which will process the job
 class AuthWorker {
+  //we get job and done callback fn as parameter when queue.process(name, concurrency, callback) is called .
   async addAuthUserToDB(job, done) {
     try {
       const { value } = job.data;

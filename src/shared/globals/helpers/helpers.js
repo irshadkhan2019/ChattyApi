@@ -21,5 +21,15 @@ class Helpers {
     }
     return parseInt(result, 10);
   }
+
+  static parseJson(prop) {
+    try {
+      JSON.parse(prop);
+    } catch (error) {
+      //if prop is not string it throws error so to avoid error use this method
+      
+      return prop;
+    }
+  }
 }
 module.exports = Helpers;
