@@ -3,6 +3,7 @@ const currentUserRoutes = require("./features/auth/routes/currentRoutes");
 const authMiddleware = require("./shared/globals/helpers/auth-middleware");
 const { serverAdapter } = require("./shared/services/queues/base.queue");
 const express = require("express");
+const postRoutes = require("./features/post/routes/postRoutes");
 
 const BASE_PATH = "/api/v1";
 const applicationRoutes = (app) => {
@@ -11,6 +12,7 @@ const applicationRoutes = (app) => {
     app.use(BASE_PATH, authRoutes.routes());
     app.use(BASE_PATH, authRoutes.signoutRoute());
     app.use(BASE_PATH, authMiddleware.verifyUser, currentUserRoutes.routes());
+    app.use(BASE_PATH, authMiddleware.verifyUser, postRoutes.routes());
   };
   routes();
 };

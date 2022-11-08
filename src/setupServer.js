@@ -11,6 +11,7 @@ const redisAdapter = require("@socket.io/redis-adapter");
 const applicationRoutes = require("./routes");
 const { StatusCodes } = require("http-status-codes");
 const { CustomError } = require("./shared/globals/helpers/error-handler");
+const { SocketIOPostHandler } = require("./shared/sockets/post");
 
 const SERVER_PORT = 5000;
 
@@ -82,6 +83,7 @@ class ChattyServer {
       const httpServer = new http.Server(app);
       //create socketIo server
       const socketIO = await this.createSocketIO(httpServer);
+
       this.startHTTPServer(httpServer);
       //pass IO to this Fn
       this.socketIOConnections(socketIO);
@@ -123,7 +125,9 @@ class ChattyServer {
       console.log(`Server running on port ${SERVER_PORT}`);
     });
   }
-  socketIOConnections() {}
+  socketIOConnections(io) {
+    const postSocketHandler = new SocketIOPostHandler(io);
+  }
 }
 
 module.exports = { ChattyServer };
