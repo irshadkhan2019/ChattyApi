@@ -14,7 +14,6 @@ withCredentials: true
   "gifUrl": "",
   "profilePicture": "https://res.cloudinary.com/dnslnpn4l/image/upload/v1667630010/636603b7660fd48a850d800f.png",
   "feelings": "sad"
-
 }
 
 ###
@@ -53,8 +52,40 @@ Content-Type: application/json
 Accept: application/json
 withCredentials: true
 
+###UPDATE POST GIVEN POSTID
+PUT {{baseUrl}}/{{urlPath}}/post/6368a7a1d2969c60b9a58f89
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
 
+{
+  "post": "MY good Updated Post",
+  "bgColor": "Yellow",
+  "privacy": "private",
+  "gifUrl": "",
+  "profilePicture": "https://res.cloudinary.com/dnslnpn4l/image/upload/v1667630010/636603b7660fd48a850d800f.png",
+  "feelings": "wow",
+  "imgId":"",
+  "imgVersion":""
+}
 
+###
+PUT {{baseUrl}}/{{urlPath}}/post/image/6368a654d2969c60b9a58f7d
+Content-Type: application/json
+Accept: application/json
+withCredentials: true,
+
+{
+  "post": "Good Updated Post 2",
+  "bgColor": "Yellow",
+  "privacy": "private",
+  "gifUrl": "",
+  "profilePicture": "https://res.cloudinary.com/dnslnpn4l/image/upload/v1667630010/636603b7660fd48a850d800f.png",
+  "feelings": "wow",
+  "imgId":"egl900bm9wn9sn4p4fqo",
+  "imgVersion":"1667802712",
+  "image":"https://res.cloudinary.com/dnslnpn4l/image/upload/v1667630010/636603b7660fd48a850d800f.png"
+}
 
 
 

@@ -223,7 +223,7 @@ class PostCache extends BaseCache {
       const count = await this.client.ZCOUNT("post", uId, uId);
       return count;
     } catch (error) {
-      log.error(error);
+      console.log(error);
       throw new ServerError("Server error. Try again.");
     }
   }
@@ -250,7 +250,65 @@ class PostCache extends BaseCache {
       multi.HSET(`users:${currentUserId}`, ["postsCount", count]);
       await multi.exec();
     } catch (error) {
-      log.error(error);
+      console.log(error);
+      throw new ServerError("Server error. Try again.");
+    }
+  }
+
+  //UPDATE POST
+  async updatePostInCache(key, updatedPost) {
+    //key is post Id and updatedPost is data passed via frontend/postman
+    const {
+      post,
+      bgColor,
+      feelings,
+      privacy,
+      gifUrl,
+      imgVersion,
+      imgId,
+      profilePicture,
+    } = updatedPost;
+    const firstList = [
+      "post",
+      `${post}`,
+      "bgColor",
+      `${bgColor}`,
+      "feelings",
+      `${feelings}`,
+      "privacy",
+      `${privacy}`,
+      "gifUrl",
+      `${gifUrl}`,
+    ];
+    const secondList = [
+      "profilePicture",
+      `${profilePicture}`,
+      "imgVersion",
+      `${imgVersion}`,
+      "imgId",
+      `${imgId}`,
+    ];
+    const dataToSave = [...firstList, ...secondList];
+
+    try {
+      if (!this.client.isOpen) {
+        await this.client.connect();
+      }
+      //update post in cache
+      await this.client.HSET(`posts:${key}`, dataToSave);
+
+      //get the updated post from cache and return it .
+      const multi = this.client.multi();
+      multi.HGETALL(`posts:${key}`);
+      const reply = await multi.exec();
+
+      reply.commentsCount = Helpers.parseJson(`${reply.commentsCount}`);
+      reply.reactions = Helpers.parseJson(`${reply.reactions}`);
+      reply.createdAt = new Date(Helpers.parseJson(`${reply.createdAt}`));
+
+      return reply;
+    } catch (error) {
+      console.log(error);
       throw new ServerError("Server error. Try again.");
     }
   }

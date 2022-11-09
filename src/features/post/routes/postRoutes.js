@@ -3,6 +3,7 @@ const authMiddleware = require("../../../shared/globals/helpers/auth-middleware"
 const Create = require("../controllers/create-post");
 const Delete = require("../controllers/delete-post");
 const Get = require("../controllers/get-post");
+const Update = require("../controllers/update-post");
 const { postSchema, postWithImageSchema } = require("../schemes/post.schemes");
 
 const validator = require("express-joi-validation").createValidator({});
@@ -46,6 +47,22 @@ class PostRoutes {
       "/post/:postId",
       authMiddleware.checkAuthentication,
       Delete.prototype.post
+    );
+
+    //update post given id
+    this.router.put(
+      "/post/:postId",
+      validator.body(postSchema),
+      authMiddleware.checkAuthentication,
+      Update.prototype.post
+    );
+
+    //update post with image given id
+    this.router.put(
+      "/post/image/:postId",
+      validator.body(postWithImageSchema),
+      authMiddleware.checkAuthentication,
+      Update.prototype.postWithImage
     );
     return this.router;
   }

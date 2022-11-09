@@ -24,20 +24,20 @@ class AuthService {
         { email: Helpers.lowerCase(email) },
       ],
     };
-    const user = await AuthModel.findOne(query).exec();
+    const user = await AuthModel.findOne(query);
     return user;
   }
   //
   async getAuthUserByUsername(username) {
     const user = await AuthModel.findOne({
       username: Helpers.firstLetterUppercase(username),
-    }).exec();
+    });
     return user;
   }
   async getAuthUserByEmail(email) {
     const user = await AuthModel.findOne({
       email: Helpers.lowerCase(email),
-    }).exec();
+    });
     return user;
   }
 
@@ -45,7 +45,7 @@ class AuthService {
     const user = await AuthModel.findOne({
       passwordResetToken: token,
       passwordResetExpires: { $gt: Date.now() },
-    }).exec();
+    });
     return user;
   }
 }
