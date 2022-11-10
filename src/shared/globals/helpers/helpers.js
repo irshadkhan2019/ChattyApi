@@ -24,10 +24,9 @@ class Helpers {
 
   static parseJson(prop) {
     try {
-      JSON.parse(prop);
+      return JSON.parse(prop);
     } catch (error) {
       //if prop is not string it throws error so to avoid error use this method
-      
       return prop;
     }
   }

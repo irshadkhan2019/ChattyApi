@@ -4,6 +4,7 @@ const authMiddleware = require("./shared/globals/helpers/auth-middleware");
 const { serverAdapter } = require("./shared/services/queues/base.queue");
 const express = require("express");
 const postRoutes = require("./features/post/routes/postRoutes");
+const reactionRoutes = require("./features/reactions/routes/reactionRoutes");
 
 const BASE_PATH = "/api/v1";
 const applicationRoutes = (app) => {
@@ -13,6 +14,7 @@ const applicationRoutes = (app) => {
     app.use(BASE_PATH, authRoutes.signoutRoute());
     app.use(BASE_PATH, authMiddleware.verifyUser, currentUserRoutes.routes());
     app.use(BASE_PATH, authMiddleware.verifyUser, postRoutes.routes());
+    app.use(BASE_PATH, authMiddleware.verifyUser, reactionRoutes.routes());
   };
   routes();
 };
