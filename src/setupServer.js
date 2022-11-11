@@ -127,6 +127,7 @@ class ChattyServer {
   }
   socketIOConnections(io) {
     const postSocketHandler = new SocketIOPostHandler(io);
+    postSocketHandler.listen();
   }
 }
 
