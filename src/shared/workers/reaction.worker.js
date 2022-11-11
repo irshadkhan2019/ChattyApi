@@ -13,6 +13,7 @@ class ReactionWorker {
       done(error);
     }
   }
+
   async removeReactionFromDB(job, done) {
     try {
       const { data } = job;

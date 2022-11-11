@@ -1,6 +1,8 @@
 const { omit } = require("lodash");
+const { default: mongoose } = require("mongoose");
 const PostModel = require("../../../features/post/models/post.schema");
 const ReactionModel = require("../../../features/reactions/models/reaction.schema");
+const Helpers = require("../../globals/helpers/helpers");
 const UserCache = require("../redis/user.cache");
 
 const userCache = new UserCache();
@@ -64,7 +66,42 @@ class ReactionService {
       ),
     ]);
   }
-}
+  //get reactions
+
+  async getPostReactions(query, sort) {
+    const reactions = await ReactionModel.aggregate([
+      { $match: query },
+      { $sort: sort },
+    ]);
+
+    return [reactions, reactions.length];
+  }
+
+  async getSinglePostReactionByUsername(postId, username) {
+    const reactions = await ReactionModel.aggregate([
+      {
+        $match: {
+          postId: new mongoose.Types.ObjectId(postId),
+          username: Helpers.firstLetterUppercase(username),
+        },
+      },
+    ]);
+
+    return reactions.length ? [reactions[0], 1] : [];
+  }
+
+  async getReactionsByUsername(username) {
+    const reactions = await ReactionModel.aggregate([
+      {
+        $match: {
+          username: Helpers.firstLetterUppercase(username),
+        },
+      },
+    ]);
+    console.log("getting reaction by username", username, reactions);
+    return reactions;
+  }
+} //eoc
 
 const reactionService = new ReactionService();
 module.exports = reactionService;

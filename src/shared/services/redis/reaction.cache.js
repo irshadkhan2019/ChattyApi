@@ -1,6 +1,7 @@
 const Helpers = require("../../globals/helpers/helpers");
 const BaseCache = require("./base.cache");
 const { find } = require("lodash");
+const { ServerError } = require("../../globals/helpers/error-handler");
 class ReactionCache extends BaseCache {
   constructor() {
     super("reactionsCache");
@@ -76,6 +77,45 @@ class ReactionCache extends BaseCache {
     return find(list, (listItem) => {
       return listItem.username === username;
     });
+  }
+  //get reaction
+  async getReactionsFromCache(postId) {
+    try {
+      if (!this.client.isOpen) {
+        await this.client.connect();
+      }
+      const reactionCount = await this.client.LLEN(`reactions:${postId}`);
+      const response = await this.client.LRANGE(`reactions:${postId}`, 0, -1);
+      const list = [];
+      for (const item of response) {
+        list.push(Helpers.parseJson(item));
+      }
+      return response.length ? [list, reactionCount] : [[], 0];
+    } catch (error) {
+      console.log(error);
+      throw new ServerError("Server error. Try again.");
+    }
+  }
+
+  async getSingleReactionByUsernameFromCache(postId, username) {
+    try {
+      if (!this.client.isOpen) {
+        await this.client.connect();
+      }
+      const response = await this.client.LRANGE(`reactions:${postId}`, 0, -1);
+      const list = [];
+      for (const item of response) {
+        list.push(Helpers.parseJson(item));
+      }
+      const result = find(list, (listItem) => {
+        return listItem?.postId === postId && listItem?.username === username;
+      });
+
+      return result ? [result, 1] : [];
+    } catch (error) {
+      console.log(error);
+      throw new ServerError("Server error. Try again.");
+    }
   }
 } //eoc
 
