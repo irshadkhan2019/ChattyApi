@@ -6,6 +6,7 @@ const express = require("express");
 const postRoutes = require("./features/post/routes/postRoutes");
 const reactionRoutes = require("./features/reactions/routes/reactionRoutes");
 const commentRoutes = require("./features/comments/routes/commentRoutes");
+const followerRoutes = require("./features/followers/routes/followerRoutes");
 
 const BASE_PATH = "/api/v1";
 const applicationRoutes = (app) => {
@@ -17,6 +18,7 @@ const applicationRoutes = (app) => {
     app.use(BASE_PATH, authMiddleware.verifyUser, postRoutes.routes());
     app.use(BASE_PATH, authMiddleware.verifyUser, reactionRoutes.routes());
     app.use(BASE_PATH, authMiddleware.verifyUser, commentRoutes.routes());
+    app.use(BASE_PATH, authMiddleware.verifyUser, followerRoutes.routes());
   };
   routes();
 };
