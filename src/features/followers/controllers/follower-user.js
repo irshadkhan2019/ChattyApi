@@ -9,8 +9,8 @@ const followerQueue = require("../../../shared/services/queues/follower.queue");
 const followerCache = new FollowerCache();
 const userCache = new UserCache();
 
-//followerId=To whom we are following
-//followeeId=THe logged in user who will follow other user
+//followerId=THe logged in user who will follow other user
+//followeeId=To whom we are following
 class Add {
   async follower(req, res) {
     const { followerId } = req.params; //to whom the logged in user will follow
