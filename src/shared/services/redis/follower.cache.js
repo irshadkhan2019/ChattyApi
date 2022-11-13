@@ -4,6 +4,7 @@ const { ServerError } = require("../../globals/helpers/error-handler");
 const Helpers = require("../../globals/helpers/helpers");
 const UserCache = require("./user.cache");
 const { mongoose } = require("mongoose");
+const { remove } = require("lodash");
 
 const userCache = new UserCache();
 
@@ -76,6 +77,34 @@ class FollowerCache extends BaseCache {
         list.push(data);
       }
       return list;
+    } catch (error) {
+      console.log(error);
+      throw new ServerError("Server error. Try again.");
+    }
+  } //eof
+
+  async updateBlockedUserPropInCache(key, prop, value, type) {
+    try {
+      if (!this.client.isOpen) {
+        await this.client.connect();
+      }
+
+      //get blocked or blockedby prop from users cache.return string []
+      const response = await this.client.HGET(`users:${key}`, prop);
+
+      const multi = this.client.multi();
+      let blocked = Helpers.parseJson(response); //parse string arr to arr
+
+      if (type === "block") {
+        blocked = [...blocked, value]; //insert userId to block
+      } else {
+        //unblock
+        remove(blocked, (id) => id === value);
+        blocked = [...blocked];
+      }
+      const dataToSave = [`${prop}`, JSON.stringify(blocked)];
+      multi.HSET(`users:${key}`, dataToSave);
+      await multi.exec();
     } catch (error) {
       console.log(error);
       throw new ServerError("Server error. Try again.");

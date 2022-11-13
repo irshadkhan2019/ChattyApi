@@ -1,5 +1,6 @@
 const express = require("express");
 const authMiddleware = require("../../../shared/globals/helpers/auth-middleware");
+const AddUser = require("../controllers/block-user");
 const Add = require("../controllers/follower-user");
 const Get = require("../controllers/get-followers");
 const Remove = require("../controllers/unfollow-user");
@@ -35,6 +36,17 @@ class FollowerRoutes {
       "/user/unfollow/:followeeId/:followerId",
       authMiddleware.checkAuthentication,
       Remove.prototype.follower
+    );
+
+    this.router.put(
+      "/user/block/:followerId",
+      authMiddleware.checkAuthentication,
+      AddUser.prototype.block
+    );
+    this.router.put(
+      "/user/unblock/:followerId",
+      authMiddleware.checkAuthentication,
+      AddUser.prototype.unblock
     );
 
     return this.router;

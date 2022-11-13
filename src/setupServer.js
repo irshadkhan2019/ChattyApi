@@ -13,6 +13,7 @@ const { StatusCodes } = require("http-status-codes");
 const { CustomError } = require("./shared/globals/helpers/error-handler");
 const { SocketIOPostHandler } = require("./shared/sockets/post");
 const { SocketIOFollowerHandler } = require("./shared/sockets/follower");
+const { SocketIOUserHandler } = require("./shared/sockets/user");
 
 const SERVER_PORT = 5000;
 
@@ -129,8 +130,10 @@ class ChattyServer {
   socketIOConnections(io) {
     const postSocketHandler = new SocketIOPostHandler(io);
     const followerSocketHandler = new SocketIOFollowerHandler(io);
+    const userSocketHandler = new SocketIOUserHandler(io);
     postSocketHandler.listen();
     followerSocketHandler.listen();
+    userSocketHandler.listen();
   }
 }
 

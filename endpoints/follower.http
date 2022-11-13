@@ -29,3 +29,19 @@ Accept: application/json
 withCredentials: true
 
 {}
+
+###BLOCK A USER
+PUT {{baseUrl}}/{{urlPath}}/user/block/6368a5c7d2969c60b9a58f74
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+{}
+
+###UNBLOCK A USER
+PUT {{baseUrl}}/{{urlPath}}/user/unblock/6368a5c7d2969c60b9a58f74
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+{}
