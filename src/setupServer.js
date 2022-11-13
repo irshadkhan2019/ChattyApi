@@ -14,6 +14,9 @@ const { CustomError } = require("./shared/globals/helpers/error-handler");
 const { SocketIOPostHandler } = require("./shared/sockets/post");
 const { SocketIOFollowerHandler } = require("./shared/sockets/follower");
 const { SocketIOUserHandler } = require("./shared/sockets/user");
+const {
+  SocketIONotificationHandler,
+} = require("./shared/sockets/notification");
 
 const SERVER_PORT = 5000;
 
@@ -131,9 +134,11 @@ class ChattyServer {
     const postSocketHandler = new SocketIOPostHandler(io);
     const followerSocketHandler = new SocketIOFollowerHandler(io);
     const userSocketHandler = new SocketIOUserHandler(io);
+    const notificationSocketHandler = new SocketIONotificationHandler();
     postSocketHandler.listen();
     followerSocketHandler.listen();
     userSocketHandler.listen();
+    notificationSocketHandler.listen(io);
   }
 }
 
