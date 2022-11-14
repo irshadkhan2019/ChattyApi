@@ -1,14 +1,15 @@
 const { default: mongoose } = require("mongoose");
 const NotificationModel = require("../../../features/notifications/models/notification.schema");
-
+const UserModel = require("../../../features/user/models/user.schema");
 class NotificationService {
   //gives all notifications for the given userId
   async getNotifications(userId) {
+    console.log("getting notification for user", userId);
     const notifications = await NotificationModel.aggregate([
       { $match: { userTo: new mongoose.Types.ObjectId(userId) } },
       {
         $lookup: {
-          from: "User",
+          from: "users",
           localField: "userFrom",
           foreignField: "_id",
           as: "userFrom",
@@ -17,7 +18,7 @@ class NotificationService {
       { $unwind: "$userFrom" },
       {
         $lookup: {
-          from: "Auth",
+          from: "auths",
           localField: "userFrom.authId",
           foreignField: "_id",
           as: "authId",
@@ -50,6 +51,17 @@ class NotificationService {
       },
     ]);
     return notifications;
+  }
+
+  async updateNotification(notificationId) {
+    await NotificationModel.updateOne(
+      { _id: notificationId },
+      { $set: { read: true } }
+    );
+  }
+
+  async deleteNotification(notificationId) {
+    await NotificationModel.deleteOne({ _id: notificationId });
   }
 }
 

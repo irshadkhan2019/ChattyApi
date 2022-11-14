@@ -1,8 +1,11 @@
 const { omit } = require("lodash");
 const { default: mongoose } = require("mongoose");
+const NotificationModel = require("../../../features/notifications/models/notification.schema");
 const PostModel = require("../../../features/post/models/post.schema");
 const ReactionModel = require("../../../features/reactions/models/reaction.schema");
 const Helpers = require("../../globals/helpers/helpers");
+const { socketIONotificationObject } = require("../../sockets/notification");
+const notificationTemplate = require("../emails/templates/notifications/notification-template");
 const UserCache = require("../redis/user.cache");
 
 const userCache = new UserCache();
@@ -24,7 +27,7 @@ class ReactionService {
       //while replacing reaction we need to change object id so remove it .
       updatedReactionObject = omit(reactionObject, ["_id"]);
     }
-    const updateReaction = await Promise.all([
+    const updatedReaction = await Promise.all([
       //get user to whom a reaction was given to his post
       userCache.getUserFromCache(`${userTo}`),
 
@@ -48,6 +51,40 @@ class ReactionService {
     ]);
 
     //send reactions notification to userTo
+    if (updatedReaction[0].notifications.reactions && userTo !== userFrom) {
+      const notificationModel = new NotificationModel();
+      const notifications = await notificationModel.insertNotification({
+        userFrom: userFrom,
+        userTo: userTo,
+        message: `${username} reacted to your post.`,
+        notificationType: "reactions",
+        entityId: new mongoose.Types.ObjectId(postId),
+        createdItemId: new mongoose.Types.ObjectId(updatedReaction[1]._id),
+        createdAt: new Date(),
+        comment: "",
+        post: updatedReaction[2].post,
+        imgId: updatedReaction[2].imgId,
+        imgVersion: updatedReaction[2].imgVersion,
+        gifUrl: updatedReaction[2].gifUrl,
+        reaction: type,
+      });
+      socketIONotificationObject.emit("insert notification", notifications, {
+        userTo,
+      });
+
+      const templateParams = {
+        username: updatedReaction[0].username,
+        message: `${username} reacted to your post.`,
+        header: "Post Reaction Notification",
+      };
+      const template =
+        notificationTemplate.notificationMessageTemplate(templateParams);
+      emailQueue.addEmailJob("reactionsEmail", {
+        receiverEmail: updatedReaction[0].email,
+        template,
+        subject: "Post reaction notification",
+      });
+    }
   }
 
   //

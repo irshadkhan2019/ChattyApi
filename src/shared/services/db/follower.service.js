@@ -1,6 +1,10 @@
 const { mongoose } = require("mongoose");
 const FollowerModel = require("../../../features/followers/models/follower.schema");
+const NotificationModel = require("../../../features/notifications/models/notification.schema");
 const UserModel = require("../../../features/user/models/user.schema");
+const { socketIONotificationObject } = require("../../sockets/notification");
+const notificationTemplate = require("../emails/templates/notifications/notification-template");
+const emailQueue = require("../queues/email.queue");
 const UserCache = require("../redis/user.cache");
 
 const userCache = new UserCache();
@@ -37,6 +41,44 @@ class FollowerService {
       users,
       userCache.getUserFromCache(followeeId),
     ]);
+
+    //send notification regarding follower to followee
+
+    if (response[1]?.notifications.follows && userId !== followeeId) {
+      const notificationModel = new NotificationModel();
+      const notifications = await notificationModel.insertNotification({
+        userFrom: userId,
+        userTo: followeeId,
+        message: `${username} is now following you.`,
+        notificationType: "follows",
+        entityId: new mongoose.Types.ObjectId(userId),
+        createdItemId: new mongoose.Types.ObjectId(following._id),
+        createdAt: new Date(),
+        comment: "",
+        post: "",
+        imgId: "",
+        imgVersion: "",
+        gifUrl: "",
+        reaction: "",
+      });
+      socketIONotificationObject.emit("insert notification", notifications, {
+        userTo: followeeId,
+      });
+
+      const templateParams = {
+        username: response[1].username,
+        message: `${username} is now following you.`,
+        header: "Follower Notification",
+      };
+      const template =
+        notificationTemplate.notificationMessageTemplate(templateParams);
+
+      emailQueue.addEmailJob("followersEmail", {
+        receiverEmail: response[1].email,
+        template,
+        subject: `${username} is now following you.`,
+      });
+    }
   } //eof
 
   async removeFollowerFromDB(followeeId, followerId) {
