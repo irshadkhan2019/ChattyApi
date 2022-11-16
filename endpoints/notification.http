@@ -7,7 +7,7 @@ Content-Type: application/json
 Accept: application/json
 withCredentials: true
 
-###
+###UPDATE NOTIFication
 PUT {{baseUrl}}/{{urlPath}}/notification/63709d0eb6259c3de4864460
 Content-Type: application/json
 Accept: application/json

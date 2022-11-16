@@ -11,7 +11,9 @@ class AuthMiddleware {
       const payload = JWT.verify(req.session?.jwt, config.JWT_TOKEN);
       req.currentUser = payload;
     } catch (error) {
-      throw new NotAuthorizedError("Token unavailable .Login again!");
+      throw new NotAuthorizedError(
+        "Token unavailable bad happened.Login again!"
+      );
     }
     next();
   }

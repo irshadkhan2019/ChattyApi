@@ -3,9 +3,10 @@ const { default: mongoose } = require("mongoose");
 const NotificationModel = require("../../../features/notifications/models/notification.schema");
 const PostModel = require("../../../features/post/models/post.schema");
 const ReactionModel = require("../../../features/reactions/models/reaction.schema");
+const { getSocketServerInstance } = require("../../../ioServerStore");
 const Helpers = require("../../globals/helpers/helpers");
-const { socketIONotificationObject } = require("../../sockets/notification");
 const notificationTemplate = require("../emails/templates/notifications/notification-template");
+const emailQueue = require("../queues/email.queue");
 const UserCache = require("../redis/user.cache");
 
 const userCache = new UserCache();
@@ -68,6 +69,8 @@ class ReactionService {
         gifUrl: updatedReaction[2].gifUrl,
         reaction: type,
       });
+      //emit event to client that a reaction notification was inserted
+      const socketIONotificationObject = getSocketServerInstance();
       socketIONotificationObject.emit("insert notification", notifications, {
         userTo,
       });

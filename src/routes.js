@@ -13,8 +13,10 @@ const BASE_PATH = "/api/v1";
 const applicationRoutes = (app) => {
   const routes = () => {
     app.use("/queues", serverAdapter.getRouter()); //GUI FOR QUEUES JOBS
-    app.use(BASE_PATH, authRoutes.routes());
+
     app.use(BASE_PATH, authRoutes.signoutRoute());
+    app.use(BASE_PATH, authRoutes.routes());
+
     app.use(BASE_PATH, authMiddleware.verifyUser, currentUserRoutes.routes());
     app.use(BASE_PATH, authMiddleware.verifyUser, postRoutes.routes());
     app.use(BASE_PATH, authMiddleware.verifyUser, reactionRoutes.routes());

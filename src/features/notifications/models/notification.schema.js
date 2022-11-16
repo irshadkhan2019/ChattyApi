@@ -1,5 +1,6 @@
 const { mongoose } = require("mongoose");
 // const notificationService = require("../../../shared/services/db/notification.service");
+// const notificationService = require("../../../shared/services/db/notification.service");
 
 const notificationSchema = new mongoose.Schema({
   userTo: { type: mongoose.Schema.Types.ObjectId, ref: "User", index: true },
@@ -35,7 +36,7 @@ notificationSchema.methods.insertNotification = async function (body) {
     gifUrl,
   } = body;
 
-  await NotificationModel.create({
+  const notification = await NotificationModel.create({
     userTo,
     userFrom,
     message,
@@ -50,10 +51,10 @@ notificationSchema.methods.insertNotification = async function (body) {
     imgVersion,
     gifUrl,
   });
+
   try {
     // const notifications = await notificationService.getNotifications(userTo);
-    // return notifications;
-    return null;
+    return [notification];
   } catch (error) {
     return error;
   }

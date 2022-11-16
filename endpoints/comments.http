@@ -26,7 +26,7 @@ Accept: application/json
 withCredentials: true
 
 {
-  "userTo": "6368a5c7d2969c60b9a58f73",
-  "postId": "6368a786d2969c60b9a58f81",
-  "comment": "awesome asdasd post"
+  "userTo": "6368a5c7d2969c60b9a58f74",
+  "postId": "	6368a794d2969c60b9a58f85",
+  "comment": "nice post asta"
 }

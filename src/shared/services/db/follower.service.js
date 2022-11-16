@@ -2,6 +2,7 @@ const { mongoose } = require("mongoose");
 const FollowerModel = require("../../../features/followers/models/follower.schema");
 const NotificationModel = require("../../../features/notifications/models/notification.schema");
 const UserModel = require("../../../features/user/models/user.schema");
+const { getSocketServerInstance } = require("../../../ioServerStore");
 const { socketIONotificationObject } = require("../../sockets/notification");
 const notificationTemplate = require("../emails/templates/notifications/notification-template");
 const emailQueue = require("../queues/email.queue");
@@ -61,6 +62,8 @@ class FollowerService {
         gifUrl: "",
         reaction: "",
       });
+      //emit event to client that a follower was added
+      const socketIONotificationObject = getSocketServerInstance();
       socketIONotificationObject.emit("insert notification", notifications, {
         userTo: followeeId,
       });

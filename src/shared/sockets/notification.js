@@ -5,4 +5,4 @@ class SocketIONotificationHandler {
     socketIONotificationObject = io;
   }
 }
-module.exports = { SocketIONotificationHandler, socketIONotificationObject };
+module.exports = { SocketIONotificationHandler };
