@@ -18,6 +18,7 @@ const {
   SocketIONotificationHandler,
 } = require("./shared/sockets/notification");
 const { setSocketServerInstance } = require("./ioServerStore");
+const { SocketIOChatHandler } = require("./shared/sockets/chat");
 
 const SERVER_PORT = 5000;
 
@@ -138,10 +139,12 @@ class ChattyServer {
     const followerSocketHandler = new SocketIOFollowerHandler(io);
     const userSocketHandler = new SocketIOUserHandler(io);
     const notificationSocketHandler = new SocketIONotificationHandler();
+    const chatSocketHandler = new SocketIOChatHandler(io);
     postSocketHandler.listen();
     followerSocketHandler.listen();
     userSocketHandler.listen();
     notificationSocketHandler.listen(io);
+    chatSocketHandler.listen();
   }
 }
 

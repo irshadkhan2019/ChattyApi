@@ -1,0 +1,21 @@
+@baseUrl = http://localhost:5000
+@urlPath = api/v1
+
+
+###
+POST {{baseUrl}}/{{urlPath}}/chat/message
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+{
+  "conversationId": "",
+  "receiverId": "636e6477e7eae7aa28d5e1a8",
+  "receiverUsername": "luffy",
+  "receiverAvatarColor": "blue",
+  "receiverProfilePicture": "",
+  "body": "Hello luffy",
+  "gifUrl": "",
+  "isRead": false,
+  "selectedImage": ""
+}
