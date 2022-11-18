@@ -2,6 +2,7 @@ const { default: mongoose } = require("mongoose");
 const CommentsModel = require("../../../features/comments/models/comment.schema");
 const NotificationModel = require("../../../features/notifications/models/notification.schema");
 const PostModel = require("../../../features/post/models/post.schema");
+const { getSocketServerInstance } = require("../../../ioServerStore");
 const notificationTemplate = require("../emails/templates/notifications/notification-template");
 const emailQueue = require("../queues/email.queue");
 const UserCache = require("../redis/user.cache");

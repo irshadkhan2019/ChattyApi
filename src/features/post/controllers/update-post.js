@@ -5,6 +5,7 @@ const {
 const {
   BadRequestError,
 } = require("../../../shared/globals/helpers/error-handler");
+const imageQueue = require("../../../shared/services/queues/image.queue");
 const postQueue = require("../../../shared/services/queues/post.queue");
 const PostCache = require("../../../shared/services/redis/post.cache");
 const { socketIOPostObject } = require("../../../shared/sockets/post");
@@ -129,6 +130,13 @@ class Update {
       postId: postId,
       // updatedPost: postUpdated,
       updatedPost,
+    });
+
+    //call image queue to add POST image to mongodb db
+    imageQueue.addImageJob("addImageToDB", {
+      userId: `${req.currentUser?.userId}`,
+      imgId: result.public_id,
+      imgVersion: result.version.toString(),
     });
 
     return result;

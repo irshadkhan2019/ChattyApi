@@ -130,6 +130,22 @@ class UserCache extends BaseCache {
       throw new ServerError("Server error try again .");
     }
   }
+
+  async updateSingleUserItemInCache(userId, prop, value) {
+    try {
+      if (!this.client.isOpen) {
+        await this.client.connect();
+      }
+      const dataToSave = [`${prop}`, JSON.stringify(value)];
+      await this.client.HSET(`users:${userId}`, dataToSave);
+
+      const response = await this.getUserFromCache(`${userId}`);
+      return response;
+    } catch (error) {
+      console.log(error);
+      throw new ServerError("Server error try again .");
+    }
+  }
 }
 
 module.exports = UserCache;

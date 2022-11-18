@@ -8,6 +8,7 @@ const reactionRoutes = require("./features/reactions/routes/reactionRoutes");
 const commentRoutes = require("./features/comments/routes/commentRoutes");
 const followerRoutes = require("./features/followers/routes/followerRoutes");
 const notificationRoutes = require("./features/notifications/routes/notificationRoutes");
+const imageRoutes = require("./features/images/routes/imageRoutes");
 
 const BASE_PATH = "/api/v1";
 const applicationRoutes = (app) => {
@@ -23,6 +24,7 @@ const applicationRoutes = (app) => {
     app.use(BASE_PATH, authMiddleware.verifyUser, commentRoutes.routes());
     app.use(BASE_PATH, authMiddleware.verifyUser, followerRoutes.routes());
     app.use(BASE_PATH, authMiddleware.verifyUser, notificationRoutes.routes());
+    app.use(BASE_PATH, authMiddleware.verifyUser, imageRoutes.routes());
   };
   routes();
 };
