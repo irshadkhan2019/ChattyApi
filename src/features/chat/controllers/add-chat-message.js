@@ -9,7 +9,6 @@ const { getSocketServerInstance } = require("../../../ioServerStore");
 const notificationTemplate = require("../../../shared/services/emails/templates/notifications/notification-template");
 const emailQueue = require("../../../shared/services/queues/email.queue");
 const MessageCache = require("../../../shared/services/redis/message.cache");
-
 const userCache = new UserCache();
 const messageCache = new MessageCache();
 
@@ -102,11 +101,30 @@ class Add {
       `${conversationObjectId}`
     );
 
+    await messageCache.addChatMessageToCache(
+      `${conversationObjectId}`,
+      messageData
+    );
+
     res
       .status(StatusCodes.OK)
       .json({ message: "Message added", conversationId: conversationObjectId });
   }
 
+  //to check if a user is on chatList page or not at client side
+  async addChatUsers(req, res) {
+    const chatUsers = await messageCache.addChatUsersToCache(req.body);
+    const socketIOChatObject = getSocketServerInstance();
+    socketIOChatObject.emit("add chat users", chatUsers);
+    res.status(StatusCodes.OK).json({ message: "Users added" });
+  }
+
+  async removeChatUsers(req, res) {
+    const chatUsers = await messageCache.removeChatUsersFromCache(req.body);
+    const socketIOChatObject = getSocketServerInstance();
+    socketIOChatObject.emit("add chat users", chatUsers);
+    res.status(StatusCodes.OK).json({ message: "Users removed" });
+  }
   emitSocketIOEvent(data) {
     const socketIOChatObject = getSocketServerInstance();
     socketIOChatObject.emit("message received", data);

@@ -9,13 +9,26 @@ Accept: application/json
 withCredentials: true
 
 {
-  "conversationId": "",
+  "conversationId": "63778649e0fa6f088a757968",
   "receiverId": "636e6477e7eae7aa28d5e1a8",
   "receiverUsername": "luffy",
   "receiverAvatarColor": "blue",
   "receiverProfilePicture": "",
-  "body": "Hello luffy",
+  "body": "Hello i m asta pasta",
   "gifUrl": "",
   "isRead": false,
   "selectedImage": ""
+}
+
+
+###
+POST {{baseUrl}}/{{urlPath}}/chat/message/add-chat-users
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+{
+  "userOne": "6368a5c7d2969c60b9a58f74",
+  "userTwo": "636e6477e7eae7aa28d5e1a8"
+
 }
