@@ -9,12 +9,12 @@ Accept: application/json
 withCredentials: true
 
 {
-  "conversationId": "63778649e0fa6f088a757968",
+  "conversationId": "6378e5016e5e9d2e3fb22413",
   "receiverId": "636e6477e7eae7aa28d5e1a8",
   "receiverUsername": "luffy",
   "receiverAvatarColor": "blue",
   "receiverProfilePicture": "",
-  "body": "Hello i m asta pasta",
+  "body": "Another msg",
   "gifUrl": "",
   "isRead": false,
   "selectedImage": ""
@@ -32,3 +32,16 @@ withCredentials: true
   "userTwo": "636e6477e7eae7aa28d5e1a8"
 
 }
+
+###
+GET  {{baseUrl}}/{{urlPath}}/chat/message/conversation-list
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+###
+GET  {{baseUrl}}/{{urlPath}}/chat/message/user/636e6477e7eae7aa28d5e1a8
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+

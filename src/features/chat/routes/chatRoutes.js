@@ -1,8 +1,9 @@
 const express = require("express");
-const joiValidation = require("../../../shared/globals/decorators/joi-validation.decorators");
+const joiValidation = require("../../../shared/globals/joi-validation/joi-validation");
 const authMiddleware = require("../../../shared/globals/helpers/auth-middleware");
 const Add = require("../controllers/add-chat-message");
 const { addChatSchema } = require("../schemes/chat");
+const Get = require("../controllers/get-chat-messages");
 const validator = require("express-joi-validation").createValidator({});
 
 class ChatRoutes {
@@ -11,6 +12,16 @@ class ChatRoutes {
   }
 
   routes() {
+    this.router.get(
+      "/chat/message/conversation-list",
+      authMiddleware.checkAuthentication,
+      Get.prototype.conversationList
+    );
+    this.router.get(
+      "/chat/message/user/:receiverId",
+      authMiddleware.checkAuthentication,
+      Get.prototype.messages
+    );
     this.router.post(
       "/chat/message",
       validator.body(addChatSchema),

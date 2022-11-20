@@ -9,6 +9,7 @@ const { getSocketServerInstance } = require("../../../ioServerStore");
 const notificationTemplate = require("../../../shared/services/emails/templates/notifications/notification-template");
 const emailQueue = require("../../../shared/services/queues/email.queue");
 const MessageCache = require("../../../shared/services/redis/message.cache");
+const chatQueue = require("../../../shared/services/queues/chat.queue");
 const userCache = new UserCache();
 const messageCache = new MessageCache();
 
@@ -105,6 +106,8 @@ class Add {
       `${conversationObjectId}`,
       messageData
     );
+
+    chatQueue.addChatJob("addChatMessageToDB", messageData);
 
     res
       .status(StatusCodes.OK)
