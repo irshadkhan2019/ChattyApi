@@ -4,6 +4,7 @@ const authMiddleware = require("../../../shared/globals/helpers/auth-middleware"
 const Add = require("../controllers/add-chat-message");
 const { addChatSchema } = require("../schemes/chat");
 const Get = require("../controllers/get-chat-messages");
+const Delete = require("../controllers/delete-chat-message");
 const validator = require("express-joi-validation").createValidator({});
 
 class ChatRoutes {
@@ -40,6 +41,12 @@ class ChatRoutes {
       "/chat/message/remove-chat-users",
       authMiddleware.checkAuthentication,
       Add.prototype.removeChatUsers
+    );
+
+    this.router.delete(
+      "/chat/message/mark-as-deleted/:messageId/:senderId/:receiverId/:type",
+      authMiddleware.checkAuthentication,
+      Delete.prototype.markMessageAsDeleted
     );
 
     return this.router;

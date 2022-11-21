@@ -83,7 +83,21 @@ class ChatService {
     ]);
     return messages;
   }
-}
+
+  async markMessageAsDeleted(messageId, type) {
+    if (type === "deleteForMe") {
+      await MessageModel.updateOne(
+        { _id: messageId },
+        { $set: { deleteForMe: true } }
+      );
+    } else {
+      await MessageModel.updateOne(
+        { _id: messageId },
+        { $set: { deleteForMe: true, deleteForEveryone: true } }
+      );
+    }
+  }
+} //EOC
 
 const chatService = new ChatService();
 module.exports = chatService;

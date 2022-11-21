@@ -185,5 +185,64 @@ class MessageCache extends BaseCache {
       throw new ServerError("Server error. Try again.");
     }
   }
+
+  async markMessageAsDeleted(senderId, receiverId, messageId, type) {
+    try {
+      if (!this.client.isOpen) {
+        await this.client.connect();
+      }
+      const { index, message, receiver } = await this.getMessage(
+        senderId,
+        receiverId,
+        messageId
+      );
+      const chatItem = Helpers.parseJson(message);
+      if (type === "deleteForMe") {
+        chatItem.deleteForMe = true;
+      } else {
+        chatItem.deleteForMe = true;
+        chatItem.deleteForEveryone = true;
+      }
+      //to update use LSET and  provide index
+      await this.client.LSET(
+        `messages:${receiver.conversationId}`,
+        index,
+        JSON.stringify(chatItem)
+      );
+
+      //fetch via index LINDEX
+      const lastMessage = await this.client.LINDEX(
+        `messages:${receiver.conversationId}`,
+        index
+      );
+      return Helpers.parseJson(lastMessage);
+    } catch (error) {
+      console.log(error);
+      throw new ServerError("Server error. Try again.");
+    }
+  }
+
+  async getMessage(senderId, receiverId, messageId) {
+    const userChatList = await this.client.LRANGE(
+      `chatList:${senderId}`,
+      0,
+      -1
+    );
+    const receiver = find(userChatList, (listItem) =>
+      listItem.includes(receiverId)
+    );
+    const parsedReceiver = Helpers.parseJson(receiver);
+    const messages = await this.client.LRANGE(
+      `messages:${parsedReceiver.conversationId}`,
+      0,
+      -1
+    );
+    const message = find(messages, (listItem) => listItem.includes(messageId));
+    const index = findIndex(messages, (listItem) =>
+      listItem.includes(messageId)
+    );
+
+    return { index, message, receiver: parsedReceiver };
+  }
 } //eoc
 module.exports = MessageCache;
