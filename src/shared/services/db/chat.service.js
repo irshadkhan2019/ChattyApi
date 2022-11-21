@@ -97,6 +97,16 @@ class ChatService {
       );
     }
   }
+
+  async markMessagesAsRead(senderId, receiverId) {
+    const query = {
+      $or: [
+        { senderId, receiverId, isRead: false },
+        { senderId: receiverId, receiverId: senderId, isRead: false },
+      ],
+    };
+    await MessageModel.updateMany(query, { $set: { isRead: true } });
+  }
 } //EOC
 
 const chatService = new ChatService();

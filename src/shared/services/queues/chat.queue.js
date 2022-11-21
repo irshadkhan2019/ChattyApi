@@ -10,6 +10,11 @@ class ChatQueue extends BaseQueue {
       5,
       chatWorker.markMessageAsDeleted
     );
+    this.processJob(
+      "markMessagesAsReadInDB",
+      5,
+      chatWorker.markMessagesAsReadInDB
+    );
   }
 
   addChatJob(name, data) {

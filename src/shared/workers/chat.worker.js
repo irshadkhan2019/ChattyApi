@@ -22,6 +22,18 @@ class ChatWorker {
       done(error);
     }
   }
+
+  async markMessagesAsReadInDB(job, done) {
+    try {
+      const { senderId, receiverId } = job.data;
+      chatService.markMessagesAsRead(senderId, receiverId);
+      job.progress(100);
+      done(null, job.data);
+    } catch (error) {
+      console.log(error);
+      done(error);
+    }
+  }
 }
 
 const chatWorker = new ChatWorker();

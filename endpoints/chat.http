@@ -46,6 +46,19 @@ Accept: application/json
 withCredentials: true
 
 
+
+###
+PUT  {{baseUrl}}/{{urlPath}}/chat/message/mark-as-read
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+{
+  "senderId":"6368a5c7d2969c60b9a58f74",
+  "receiverId":"636e6477e7eae7aa28d5e1a8"
+}
+
+
 ###
 DELETE  {{baseUrl}}/{{urlPath}}/chat/message/mark-as-deleted/6379bc22dbd86e891b67d446/6368a5c7d2969c60b9a58f74/636e6477e7eae7aa28d5e1a8/deleteForEveryone
 Accept: application/json

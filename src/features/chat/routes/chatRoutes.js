@@ -2,9 +2,10 @@ const express = require("express");
 const joiValidation = require("../../../shared/globals/joi-validation/joi-validation");
 const authMiddleware = require("../../../shared/globals/helpers/auth-middleware");
 const Add = require("../controllers/add-chat-message");
-const { addChatSchema } = require("../schemes/chat");
+const { addChatSchema, markChatSchema } = require("../schemes/chat");
 const Get = require("../controllers/get-chat-messages");
 const Delete = require("../controllers/delete-chat-message");
+const Update = require("../controllers/update-chat-message");
 const validator = require("express-joi-validation").createValidator({});
 
 class ChatRoutes {
@@ -41,6 +42,13 @@ class ChatRoutes {
       "/chat/message/remove-chat-users",
       authMiddleware.checkAuthentication,
       Add.prototype.removeChatUsers
+    );
+
+    this.router.put(
+      "/chat/message/mark-as-read",
+      validator.body(markChatSchema),
+      authMiddleware.checkAuthentication,
+      Update.prototype.message
     );
 
     this.router.delete(

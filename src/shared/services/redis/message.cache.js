@@ -1,4 +1,4 @@
-const { findIndex, find } = require("lodash");
+const { findIndex, find, filter } = require("lodash");
 const { ServerError } = require("../../globals/helpers/error-handler");
 const Helpers = require("../../globals/helpers/helpers");
 const BaseCache = require("./base.cache");
@@ -243,6 +243,57 @@ class MessageCache extends BaseCache {
     );
 
     return { index, message, receiver: parsedReceiver };
+  }
+
+  //mark as read
+  async updateChatMessages(senderId, receiverId) {
+    try {
+      if (!this.client.isOpen) {
+        await this.client.connect();
+      }
+      const userChatList = await this.client.LRANGE(
+        `chatList:${senderId}`,
+        0,
+        -1
+      );
+      const receiver = find(userChatList, (listItem) =>
+        listItem.includes(receiverId)
+      );
+      const parsedReceiver = Helpers.parseJson(receiver);
+      const messages = await this.client.LRANGE(
+        `messages:${parsedReceiver.conversationId}`,
+        0,
+        -1
+      );
+
+      const unreadMessages = filter(
+        messages,
+        (listItem) => !Helpers.parseJson(listItem).isRead
+      );
+
+      //mark all unread msg as read
+      for (const item of unreadMessages) {
+        const chatItem = Helpers.parseJson(item);
+        const index = findIndex(messages, (listItem) =>
+          listItem.includes(`${chatItem._id}`)
+        );
+        chatItem.isRead = true;
+        await this.client.LSET(
+          `messages:${chatItem.conversationId}`,
+          index,
+          JSON.stringify(chatItem)
+        );
+      }
+
+      const lastMessage = await this.client.LINDEX(
+        `messages:${parsedReceiver.conversationId}`,
+        -1
+      );
+      return Helpers.parseJson(lastMessage);
+    } catch (error) {
+      console.log(error);
+      throw new ServerError("Server error. Try again.");
+    }
   }
 } //eoc
 module.exports = MessageCache;
