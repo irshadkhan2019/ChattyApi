@@ -34,6 +34,18 @@ class ChatWorker {
       done(error);
     }
   }
+
+  async updateMessageReaction(job, done) {
+    try {
+      const { messageId, senderName, reaction, type } = job.data;
+      chatService.updateMessageReaction(messageId, senderName, reaction, type);
+      job.progress(100);
+      done(null, job.data);
+    } catch (error) {
+      console.log(error);
+      done(error);
+    }
+  }
 }
 
 const chatWorker = new ChatWorker();

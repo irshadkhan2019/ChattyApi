@@ -1,4 +1,4 @@
-const { findIndex, find, filter } = require("lodash");
+const { findIndex, find, filter, remove } = require("lodash");
 const { ServerError } = require("../../globals/helpers/error-handler");
 const Helpers = require("../../globals/helpers/helpers");
 const BaseCache = require("./base.cache");
@@ -290,6 +290,73 @@ class MessageCache extends BaseCache {
         -1
       );
       return Helpers.parseJson(lastMessage);
+    } catch (error) {
+      console.log(error);
+      throw new ServerError("Server error. Try again.");
+    }
+  }
+
+  async updateMessageReaction(
+    conversationId,
+    messageId,
+    reaction,
+    senderName,
+    type // can be 'add' | 'remove'
+  ) {
+    try {
+      if (!this.client.isOpen) {
+        await this.client.connect();
+      }
+      const messages = await this.client.LRANGE(
+        `messages:${conversationId}`,
+        0,
+        -1
+      );
+      const messageIndex = findIndex(messages, (listItem) =>
+        listItem.includes(messageId)
+      );
+      const message = await this.client.LINDEX(
+        `messages:${conversationId}`,
+        messageIndex
+      );
+
+      //convert from string to Json
+      const parsedMessage = Helpers.parseJson(message);
+
+      const reactions = [];
+      //if  message exists
+      if (parsedMessage) {
+        //remove previously added reaction for the user who is adding new reaction to a msg
+        remove(
+          parsedMessage.reaction,
+          (reaction) => reaction.senderName === senderName
+        );
+
+        if (type === "add") {
+          reactions.push({ senderName, type: reaction });
+          //add own reaction to reaction list of a msg + retain prev msgs
+          parsedMessage.reaction = [...parsedMessage.reaction, ...reactions];
+          //store updated msg having reaction list updated
+          await this.client.LSET(
+            `messages:${conversationId}`,
+            messageIndex,
+            JSON.stringify(parsedMessage)
+          );
+        } else {
+          await this.client.LSET(
+            `messages:${conversationId}`,
+            messageIndex,
+            JSON.stringify(parsedMessage)
+          );
+        }
+      }
+
+      //send updated message with reaction as response
+      const updatedMessage = await this.client.LINDEX(
+        `messages:${conversationId}`,
+        messageIndex
+      );
+      return Helpers.parseJson(updatedMessage);
     } catch (error) {
       console.log(error);
       throw new ServerError("Server error. Try again.");

@@ -107,6 +107,22 @@ class ChatService {
     };
     await MessageModel.updateMany(query, { $set: { isRead: true } });
   }
+
+  async updateMessageReaction(messageId, senderName, reaction, type) {
+    //type=>add/remove
+
+    if (type === "add") {
+      await MessageModel.updateOne(
+        { _id: messageId },
+        { $push: { reaction: { senderName, type: reaction } } }
+      );
+    } else {
+      await MessageModel.updateOne(
+        { _id: messageId },
+        { $pull: { reaction: { senderName } } }
+      );
+    }
+  }
 } //EOC
 
 const chatService = new ChatService();

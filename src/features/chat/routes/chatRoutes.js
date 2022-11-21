@@ -6,6 +6,7 @@ const { addChatSchema, markChatSchema } = require("../schemes/chat");
 const Get = require("../controllers/get-chat-messages");
 const Delete = require("../controllers/delete-chat-message");
 const Update = require("../controllers/update-chat-message");
+const Message = require("../controllers/add-message-reaction");
 const validator = require("express-joi-validation").createValidator({});
 
 class ChatRoutes {
@@ -49,6 +50,12 @@ class ChatRoutes {
       validator.body(markChatSchema),
       authMiddleware.checkAuthentication,
       Update.prototype.message
+    );
+    //add reaction to msg
+    this.router.put(
+      "/chat/message/reaction",
+      authMiddleware.checkAuthentication,
+      Message.prototype.reaction
     );
 
     this.router.delete(

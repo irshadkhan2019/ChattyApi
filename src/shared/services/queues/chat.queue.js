@@ -15,6 +15,11 @@ class ChatQueue extends BaseQueue {
       5,
       chatWorker.markMessagesAsReadInDB
     );
+    this.processJob(
+      "updateMessageReaction",
+      5,
+      chatWorker.updateMessageReaction
+    );
   }
 
   addChatJob(name, data) {
