@@ -1,18 +1,23 @@
-let socketIOChatObject;
+const { connectedUsersMap } = require("./user");
 
 class SocketIOChatHandler {
   constructor(io) {
     this.io = io;
-    socketIOChatObject = io;
   }
 
   listen() {
     this.io.on("connection", (socket) => {
-      socket.on("join room", (data) => {
-        console.log(data);
+      //when users open chat page they emit this event
+      socket.on("join room", (users) => {
+        const { senderName, receiverName } = users;
+        const senderSocketId = connectedUsersMap.get(senderName);
+        const receiverSocketId = connectedUsersMap.get(receiverName);
+        //subscribe the socket to a given channel
+        socket.join(senderSocketId);
+        socket.join(receiverSocketId);
       });
     });
   }
 }
 
-module.exports = { SocketIOChatHandler, socketIOChatObject };
+module.exports = { SocketIOChatHandler };
