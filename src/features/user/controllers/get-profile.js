@@ -73,5 +73,31 @@ class Get {
         );
     return result;
   }
+
+  //get logged in users profile
+  async profile(req, res) {
+    const cachedUser = await userCache.getUserFromCache(
+      `${req.currentUser?.userId}`
+    );
+    const existingUser = cachedUser
+      ? cachedUser
+      : await userService.getUserById(`${req.currentUser?.userId}`);
+    res
+      .status(StatusCodes.OK)
+      .json({ message: "Get user profile", user: existingUser });
+  }
+
+  //get other users profile
+  async profileByUserId(req, res) {
+    const { userId } = req.params;
+    const cachedUser = await userCache.getUserFromCache(userId);
+
+    const existingUser = cachedUser
+      ? cachedUser
+      : await userService.getUserById(userId);
+    res
+      .status(HTTP_STATUS.OK)
+      .json({ message: "Get user profile by id", user: existingUser });
+  }
 }
 module.exports = Get;
