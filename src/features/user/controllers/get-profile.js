@@ -1,5 +1,6 @@
 const { StatusCodes } = require("http-status-codes");
 const { default: mongoose } = require("mongoose");
+const Helpers = require("../../../shared/globals/helpers/helpers");
 const followerService = require("../../../shared/services/db/follower.service");
 const userService = require("../../../shared/services/db/user.service");
 const FollowerCache = require("../../../shared/services/redis/follower.cache");
@@ -96,8 +97,33 @@ class Get {
       ? cachedUser
       : await userService.getUserById(userId);
     res
-      .status(HTTP_STATUS.OK)
+      .status(StatusCodes.OK)
       .json({ message: "Get user profile by id", user: existingUser });
+  }
+
+  async profileAndPosts(req, res) {
+    const { userId, username, uId } = req.params;
+    const userName = Helpers.firstLetterUppercase(username);
+    const cachedUser = await userCache.getUserFromCache(userId);
+    const cachedUserPosts = await postCache.getUsersPostsFromCache(
+      "post",
+      parseInt(uId, 10)
+    );
+
+    const existingUser = cachedUser
+      ? cachedUser
+      : await userService.getUserById(userId);
+    const userPosts = cachedUserPosts.length
+      ? cachedUserPosts
+      : await postService.getPosts({ username: userName }, 0, 100, {
+          createdAt: -1,
+        });
+
+    res.status(StatusCodes.OK).json({
+      message: "Get user profile and posts",
+      user: existingUser,
+      posts: userPosts,
+    });
   }
 }
 module.exports = Get;
