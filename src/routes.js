@@ -10,6 +10,7 @@ const followerRoutes = require("./features/followers/routes/followerRoutes");
 const notificationRoutes = require("./features/notifications/routes/notificationRoutes");
 const imageRoutes = require("./features/images/routes/imageRoutes");
 const chatRoutes = require("./features/chat/routes/chatRoutes");
+const userRoutes = require("./features/user/routes/userRoutes");
 
 const BASE_PATH = "/api/v1";
 const applicationRoutes = (app) => {
@@ -25,6 +26,7 @@ const applicationRoutes = (app) => {
     app.use(BASE_PATH, authMiddleware.verifyUser, notificationRoutes.routes());
     app.use(BASE_PATH, authMiddleware.verifyUser, imageRoutes.routes());
     app.use(BASE_PATH, authMiddleware.verifyUser, chatRoutes.routes());
+    app.use(BASE_PATH, authMiddleware.verifyUser, userRoutes.routes());
   };
   routes();
 };

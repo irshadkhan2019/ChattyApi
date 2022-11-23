@@ -131,6 +131,53 @@ class UserCache extends BaseCache {
     }
   }
 
+  async getUsersFromCache(start, end, excludedUserKey) {
+    try {
+      if (!this.client.isOpen) {
+        await this.client.connect();
+      }
+      const response = await this.client.ZRANGE("user", start, end, {
+        REV: true,
+      });
+      const multi = this.client.multi();
+
+      //get all usersId based on pagination except loggedin userid
+      for (const key of response) {
+        if (key !== excludedUserKey) {
+          multi.HGETALL(`users:${key}`);
+        }
+      }
+
+      //get all users except loggedin user
+      const replies = await multi.exec();
+      const userReplies = [];
+
+      for (const reply of replies) {
+        reply.createdAt = new Date(Helpers.parseJson(`${reply.createdAt}`));
+        reply.postsCount = Helpers.parseJson(`${reply.postsCount}`);
+        reply.blocked = Helpers.parseJson(`${reply.blocked}`);
+        reply.blockedBy = Helpers.parseJson(`${reply.blockedBy}`);
+        reply.notifications = Helpers.parseJson(`${reply.notifications}`);
+        reply.social = Helpers.parseJson(`${reply.social}`);
+        reply.followersCount = Helpers.parseJson(`${reply.followersCount}`);
+        reply.followingCount = Helpers.parseJson(`${reply.followingCount}`);
+        reply.bgImageId = Helpers.parseJson(`${reply.bgImageId}`);
+        reply.bgImageVersion = Helpers.parseJson(`${reply.bgImageVersion}`);
+        reply.profilePicture = Helpers.parseJson(`${reply.profilePicture}`);
+        reply.work = Helpers.parseJson(`${reply.work}`);
+        reply.school = Helpers.parseJson(`${reply.school}`);
+        reply.location = Helpers.parseJson(`${reply.location}`);
+        reply.quote = Helpers.parseJson(`${reply.quote}`);
+
+        userReplies.push(reply);
+      }
+      return userReplies;
+    } catch (error) {
+      console.log(error);
+      throw new ServerError("Server error. Try again.");
+    }
+  }
+
   async updateSingleUserItemInCache(userId, prop, value) {
     try {
       if (!this.client.isOpen) {
@@ -144,6 +191,18 @@ class UserCache extends BaseCache {
     } catch (error) {
       console.log(error);
       throw new ServerError("Server error try again .");
+    }
+  }
+  async getTotalUsersInCache() {
+    try {
+      if (!this.client.isOpen) {
+        await this.client.connect();
+      }
+      const count = await this.client.ZCARD("user");
+      return count;
+    } catch (error) {
+      console.log(error);
+      throw new ServerError("Server error. Try again.");
     }
   }
 }

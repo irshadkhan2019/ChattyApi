@@ -4,7 +4,7 @@ const postService = require("../../../shared/services/db/post.service");
 const PostCache = require("../../../shared/services/redis/post.cache");
 
 const postCache = new PostCache();
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 5;
 
 class Get {
   async posts(req, res) {

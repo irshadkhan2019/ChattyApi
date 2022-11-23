@@ -48,6 +48,32 @@ class UserService {
     return users[0];
   }
 
+  async getAllUsers(userId, skip, limit) {
+    const users = await UserModel.aggregate([
+      //get all docs where id is not equal to loggedin User
+      { $match: { _id: { $ne: new mongoose.Types.ObjectId(userId) } } },
+      { $skip: skip },
+      { $limit: limit },
+      { $sort: { createdAt: -1 } },
+      {
+        $lookup: {
+          from: "Auth",
+          localField: "authId",
+          foreignField: "_id",
+          as: "authId",
+        },
+      },
+      { $unwind: "$authId" },
+      { $project: this.aggregateProject() },
+    ]);
+    return users;
+  }
+
+  async getTotalUsersInDB() {
+    const totalCount = await UserModel.find({}).countDocuments();
+    return totalCount;
+  }
+
   aggregateProject() {
     return {
       _id: 1,
