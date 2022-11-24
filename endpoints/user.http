@@ -30,3 +30,12 @@ Content-Type: application/json
 Accept: application/json
 withCredentials: true
 
+###get random users
+GET {{baseUrl}}/{{urlPath}}/user/profile/user/suggestions
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+
+
+

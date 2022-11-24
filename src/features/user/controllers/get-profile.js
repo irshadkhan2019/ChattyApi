@@ -125,5 +125,22 @@ class Get {
       posts: userPosts,
     });
   }
+
+  async randomUserSuggestions(req, res) {
+    let randomUsers = [];
+    const cachedUsers = await userCache.getRandomUsersFromCache(
+      `${req.currentUser?.userId}`,
+      req.currentUser?.username
+    );
+    if (cachedUsers.length) {
+      randomUsers = [...cachedUsers];
+    } else {
+      const users = await userService.getRandomUsers(req.currentUser?.userId);
+      randomUsers = [...users];
+    }
+    res
+      .status(StatusCodes.OK)
+      .json({ message: "User suggestions", users: randomUsers });
+  }
 }
 module.exports = Get;

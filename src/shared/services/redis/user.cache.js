@@ -1,3 +1,4 @@
+const { findIndex, indexOf } = require("lodash");
 const { ServerError } = require("../../globals/helpers/error-handler");
 const Helpers = require("../../globals/helpers/helpers");
 const BaseCache = require("./base.cache");
@@ -200,6 +201,59 @@ class UserCache extends BaseCache {
       }
       const count = await this.client.ZCARD("user");
       return count;
+    } catch (error) {
+      console.log(error);
+      throw new ServerError("Server error. Try again.");
+    }
+  }
+
+  //random users
+  async getRandomUsersFromCache(userId, excludedUsername) {
+    try {
+      if (!this.client.isOpen) {
+        await this.client.connect();
+      }
+      const replies = [];
+      const followers = await this.client.LRANGE(`followers:${userId}`, 0, -1);
+      const users = await this.client.ZRANGE("user", 0, -1);
+
+      //shuffle the users
+      const randomUsers = Helpers.shuffle(users).slice(0, 10);
+
+      for (const key of randomUsers) {
+        //check if the user/key is also in followers list
+        const followerIndex = indexOf(followers, key);
+        //if user not in followers list
+        if (followerIndex < 0) {
+          const userHash = await this.client.HGETALL(`users:${key}`);
+          replies.push(userHash);
+        }
+      }
+      const excludedUsernameIndex = findIndex(replies, [
+        "username",
+        excludedUsername,
+      ]);
+      //remove loggedIn user if it exists in list
+      replies.splice(excludedUsernameIndex, 1);
+
+      for (const reply of replies) {
+        reply.createdAt = new Date(Helpers.parseJson(`${reply.createdAt}`));
+        reply.postsCount = Helpers.parseJson(`${reply.postsCount}`);
+        reply.blocked = Helpers.parseJson(`${reply.blocked}`);
+        reply.blockedBy = Helpers.parseJson(`${reply.blockedBy}`);
+        reply.notifications = Helpers.parseJson(`${reply.notifications}`);
+        reply.social = Helpers.parseJson(`${reply.social}`);
+        reply.followersCount = Helpers.parseJson(`${reply.followersCount}`);
+        reply.followingCount = Helpers.parseJson(`${reply.followingCount}`);
+        reply.bgImageId = Helpers.parseJson(`${reply.bgImageId}`);
+        reply.bgImageVersion = Helpers.parseJson(`${reply.bgImageVersion}`);
+        reply.profilePicture = Helpers.parseJson(`${reply.profilePicture}`);
+        reply.work = Helpers.parseJson(`${reply.work}`);
+        reply.school = Helpers.parseJson(`${reply.school}`);
+        reply.location = Helpers.parseJson(`${reply.location}`);
+        reply.quote = Helpers.parseJson(`${reply.quote}`);
+      }
+      return replies;
     } catch (error) {
       console.log(error);
       throw new ServerError("Server error. Try again.");

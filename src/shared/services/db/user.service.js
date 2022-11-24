@@ -1,5 +1,7 @@
+const { indexOf } = require("lodash");
 const { mongoose } = require("mongoose");
 const UserModel = require("../../../features/user/models/user.schema");
+const followerService = require("./follower.service");
 
 class UserService {
   //creates document in auth collection
@@ -72,6 +74,49 @@ class UserService {
   async getTotalUsersInDB() {
     const totalCount = await UserModel.find({}).countDocuments();
     return totalCount;
+  }
+
+  async getRandomUsers(userId) {
+    const randomUsers = [];
+    const users = await UserModel.aggregate([
+      { $match: { _id: { $ne: new mongoose.Types.ObjectId(userId) } } },
+      {
+        $lookup: {
+          from: "Auth",
+          localField: "authId",
+          foreignField: "_id",
+          as: "authId",
+        },
+      },
+      { $unwind: "$authId" },
+      { $sample: { size: 10 } }, //random 10 users
+      {
+        $addFields: {
+          username: "$authId.username",
+          email: "$authId.email",
+          avatarColor: "$authId.avatarColor",
+          uId: "$authId.uId",
+          createdAt: "$authId.createdAt",
+        },
+      },
+      {
+        $project: {
+          authId: 0,
+          __v: 0,
+        },
+      },
+    ]);
+
+    const followers = await followerService.getFolloweesIds(`${userId}`);
+
+    for (const user of users) {
+      const followerIndex = indexOf(followers, user._id.toString());
+      if (followerIndex < 0) {
+        //push users who are not already followed by userId
+        randomUsers.push(user);
+      }
+    }
+    return randomUsers;
   }
 
   aggregateProject() {

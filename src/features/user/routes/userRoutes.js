@@ -33,6 +33,12 @@ class UserRoutes {
       Get.prototype.profileAndPosts
     );
 
+    this.router.get(
+      "/user/profile/user/suggestions",
+      authMiddleware.checkAuthentication,
+      Get.prototype.randomUserSuggestions
+    );
+
     return this.router;
   }
 }

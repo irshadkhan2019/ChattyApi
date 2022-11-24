@@ -16,7 +16,9 @@ class Get {
     let totalPosts = 0;
 
     //get post from cache
+
     const cachedPosts = await postCache.getPostsFromCache("post", start, limit);
+    console.log("A REQ was made for posts :", start, limit, cachedPosts.length);
 
     if (!cachedPosts.length) {
       posts = cachedPosts;

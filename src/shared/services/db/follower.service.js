@@ -1,3 +1,4 @@
+const { map } = require("lodash");
 const { mongoose } = require("mongoose");
 const FollowerModel = require("../../../features/followers/models/follower.schema");
 const NotificationModel = require("../../../features/notifications/models/notification.schema");
@@ -207,6 +208,21 @@ class FollowerService {
       },
     ]);
     return follower;
+  }
+
+  async getFolloweesIds(userId) {
+    //gets all users who is been followed by userId
+    const followee = await FollowerModel.aggregate([
+      { $match: { followerId: new mongoose.Types.ObjectId(userId) } },
+      {
+        $project: {
+          followeeId: 1,
+          _id: 0,
+        },
+      },
+    ]);
+    //returns list of string of followee ids
+    return map(followee, (result) => result.followeeId.toString());
   }
 } //eoc
 
