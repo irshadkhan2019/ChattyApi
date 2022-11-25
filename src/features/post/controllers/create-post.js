@@ -1,11 +1,11 @@
 const { StatusCodes } = require("http-status-codes");
+const { getSocketServerInstance } = require("../../../ioServerStore");
 const {
   BadRequestError,
 } = require("../../../shared/globals/helpers/error-handler");
 const imageQueue = require("../../../shared/services/queues/image.queue");
 const postQueue = require("../../../shared/services/queues/post.queue");
 const PostCache = require("../../../shared/services/redis/post.cache");
-const { socketIOPostObject } = require("../../../shared/sockets/post");
 const ObjectId = require("mongodb").ObjectId;
 const {
   uploads,
@@ -38,8 +38,8 @@ class Create {
     };
 
     //emit event of the created post
-    console.log("socketObjcheck", socketIOPostObject);
-    // socketIOPostObject.emit("add post", createdPost); //client will listen for this event
+    const socketIOPostObject = getSocketServerInstance();
+    socketIOPostObject.emit("add post", createdPost); //client will listen for this event
 
     //save post in cache
     await postCache.savePostToCache({
@@ -90,7 +90,8 @@ class Create {
     };
 
     //emit event of the created post
-    // socketIOPostObject.emit("add post", createdPost); //client will listen for this event
+    const socketIOPostObject = getSocketServerInstance();
+    socketIOPostObject.emit("add post", createdPost); //client will listen for this event
 
     //save post in cache
     await postCache.savePostToCache({

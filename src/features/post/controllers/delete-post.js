@@ -1,13 +1,14 @@
 const { StatusCodes } = require("http-status-codes");
+const { getSocketServerInstance } = require("../../../ioServerStore");
 const postQueue = require("../../../shared/services/queues/post.queue");
 const PostCache = require("../../../shared/services/redis/post.cache");
-const { socketIOPostObject } = require("../../../shared/sockets/post");
 
 const postCache = new PostCache();
 
 class Delete {
   async post(req, res) {
-    // socketIOPostObject.emit("delete post", req.params.postId);
+    const socketIOPostObject = getSocketServerInstance();
+    socketIOPostObject.emit("delete post", req.params.postId);
     await postCache.deletePostFromCache(
       req.params.postId,
       `${req.currentUser?.userId}`

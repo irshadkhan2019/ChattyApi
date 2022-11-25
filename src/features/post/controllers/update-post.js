@@ -1,4 +1,5 @@
 const { StatusCodes } = require("http-status-codes");
+const { getSocketServerInstance } = require("../../../ioServerStore");
 const {
   uploads,
 } = require("../../../shared/globals/helpers/cloudinary-upload");
@@ -8,7 +9,6 @@ const {
 const imageQueue = require("../../../shared/services/queues/image.queue");
 const postQueue = require("../../../shared/services/queues/post.queue");
 const PostCache = require("../../../shared/services/redis/post.cache");
-const { socketIOPostObject } = require("../../../shared/sockets/post");
 
 const postCache = new PostCache();
 
@@ -39,7 +39,9 @@ class Update {
 
     //update in cache
     const postUpdated = await postCache.updatePostInCache(postId, updatedPost);
-    // socketIOPostObject.emit("update post", postUpdated, "posts");
+
+    const socketIOPostObject = getSocketServerInstance();
+    socketIOPostObject.emit("update post", postUpdated, "posts");
 
     //update in db
     postQueue.addPostJob("updatePostInDB", {
@@ -95,7 +97,9 @@ class Update {
     };
 
     const postUpdated = await postCache.updatePostInCache(postId, updatedPost);
-    // socketIOPostObject.emit('update post', postUpdated, 'posts');
+
+    const socketIOPostObject = getSocketServerInstance();
+    socketIOPostObject.emit("update post", postUpdated, "posts");
     postQueue.addPostJob("updatePostInDB", {
       postId: postId,
       // updatedPost: postUpdated,
@@ -125,7 +129,9 @@ class Update {
     };
 
     const postUpdated = await postCache.updatePostInCache(postId, updatedPost);
-    // socketIOPostObject.emit('update post', postUpdated, 'posts');
+
+    const socketIOPostObject = getSocketServerInstance();
+    socketIOPostObject.emit("update post", postUpdated, "posts");
     postQueue.addPostJob("updatePostInDB", {
       postId: postId,
       // updatedPost: postUpdated,
