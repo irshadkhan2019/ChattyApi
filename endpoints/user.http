@@ -37,5 +37,12 @@ Accept: application/json
 withCredentials: true
 
 
+###search users
+GET {{baseUrl}}/{{urlPath}}/user/profile/search/izu
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+
 
 

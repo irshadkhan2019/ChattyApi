@@ -1,5 +1,6 @@
 const { indexOf } = require("lodash");
 const { mongoose } = require("mongoose");
+const AuthModel = require("../../../features/auth/models/auth.schema");
 const UserModel = require("../../../features/user/models/user.schema");
 const followerService = require("./follower.service");
 
@@ -117,6 +118,31 @@ class UserService {
       }
     }
     return randomUsers;
+  }
+
+  async searchUsers(regex) {
+    const users = await AuthModel.aggregate([
+      { $match: { username: regex } },
+      {
+        $lookup: {
+          from: "users",
+          localField: "_id",
+          foreignField: "authId",
+          as: "user",
+        },
+      },
+      { $unwind: "$user" },
+      {
+        $project: {
+          _id: "$user._id",
+          username: 1,
+          email: 1,
+          avatarColor: 1,
+          profilePicture: 1,
+        },
+      },
+    ]);
+    return users;
   }
 
   aggregateProject() {

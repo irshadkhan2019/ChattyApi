@@ -44,5 +44,9 @@ class Helpers {
     }
     return list;
   }
+
+  static escapeRegex(text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+  }
 }
 module.exports = Helpers;

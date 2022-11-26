@@ -1,6 +1,7 @@
 const express = require("express");
 const authMiddleware = require("../../../shared/globals/helpers/auth-middleware");
 const Get = require("../controllers/get-profile");
+const Search = require("../controllers/search-user");
 const validator = require("express-joi-validation").createValidator({});
 
 class UserRoutes {
@@ -37,6 +38,12 @@ class UserRoutes {
       "/user/profile/user/suggestions",
       authMiddleware.checkAuthentication,
       Get.prototype.randomUserSuggestions
+    );
+
+    this.router.get(
+      "/user/profile/search/:query",
+      authMiddleware.checkAuthentication,
+      Search.prototype.user
     );
 
     return this.router;
