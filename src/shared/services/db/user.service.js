@@ -152,6 +152,36 @@ class UserService {
     );
   }
 
+  async updateUserInfo(userId, info) {
+    await UserModel.updateOne(
+      { _id: userId },
+      {
+        $set: {
+          work: info["work"],
+          school: info["school"],
+          quote: info["quote"],
+          location: info["location"],
+        },
+      }
+    );
+  }
+
+  async updateSocialLinks(userId, links) {
+    await UserModel.updateOne(
+      { _id: userId },
+      {
+        $set: { social: links },
+      }
+    );
+  }
+
+  async updateNotificationSettings(userId, settings) {
+    await UserModel.updateOne(
+      { _id: userId },
+      { $set: { notifications: settings } }
+    );
+  }
+
   aggregateProject() {
     return {
       _id: 1,

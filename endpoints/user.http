@@ -56,6 +56,46 @@ withCredentials: true
 }
 
 
+###
+PUT {{baseUrl}}/{{urlPath}}/user/profile/basic-info
+content-type: application/json
+Accept: 'application/json'
+withCredentials: true
+
+{
+  "quote": "Today is a gift",
+  "work": "",
+  "school": "paul",
+  "location": "Mumbai,India"
+}
+
+###
+PUT {{baseUrl}}/{{urlPath}}/user/profile/social-links
+content-type: application/json
+Accept: 'application/json'
+withCredentials: true
+
+{
+  "instagram": "",
+  "twitter": "",
+  "facebook": "facebokk/fake",
+  "youtube": ""
+}
+
+###
+PUT {{baseUrl}}/{{urlPath}}/user/profile/settings
+content-type: application/json
+Accept: 'application/json'
+withCredentials: true
+
+{
+  "messages": false,
+  "reactions": true,
+  "comments": false,
+  "follows": true
+}
+
+
 
 
 

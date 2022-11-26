@@ -194,6 +194,7 @@ class UserCache extends BaseCache {
       throw new ServerError("Server error try again .");
     }
   }
+
   async getTotalUsersInCache() {
     try {
       if (!this.client.isOpen) {

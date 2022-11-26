@@ -23,7 +23,7 @@ withCredentials: true
 
 {
   "username": "kaido",
-  "password": "password"
+  "password": "newpassword"
 }
 
 
