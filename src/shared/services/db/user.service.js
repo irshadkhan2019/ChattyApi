@@ -145,6 +145,13 @@ class UserService {
     return users;
   }
 
+  async updatePassword(username, hashedPassword) {
+    await AuthModel.updateOne(
+      { username },
+      { $set: { password: hashedPassword } }
+    );
+  }
+
   aggregateProject() {
     return {
       _id: 1,

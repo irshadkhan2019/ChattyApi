@@ -1,7 +1,9 @@
 const express = require("express");
 const authMiddleware = require("../../../shared/globals/helpers/auth-middleware");
+const Update = require("../controllers/change-password");
 const Get = require("../controllers/get-profile");
 const Search = require("../controllers/search-user");
+const { changePasswordSchema } = require("../schemes/info");
 const validator = require("express-joi-validation").createValidator({});
 
 class UserRoutes {
@@ -44,6 +46,13 @@ class UserRoutes {
       "/user/profile/search/:query",
       authMiddleware.checkAuthentication,
       Search.prototype.user
+    );
+
+    this.router.put(
+      "/user/profile/change-password",
+      validator.body(changePasswordSchema),
+      authMiddleware.checkAuthentication,
+      Update.prototype.password
     );
 
     return this.router;

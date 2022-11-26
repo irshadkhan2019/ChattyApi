@@ -43,6 +43,19 @@ Content-Type: application/json
 Accept: application/json
 withCredentials: true
 
+###search users
+PUT  {{baseUrl}}/{{urlPath}}/user/profile/change-password
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+{
+   "currentPassword":"password",
+   "newPassword": "newpassword",
+   "confirmPassword":"newpassword"
+}
+
+
 
 
 
