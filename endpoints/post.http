@@ -64,6 +64,12 @@ Content-Type: application/json
 Accept: application/json
 withCredentials: true
 
+###GET POSTS WITH Video FROM CACHE/DB
+GET  {{baseUrl}}/{{urlPath}}/post/videos/1
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
 
 ###DELETE POST GIVEN POSTID
 DELETE {{baseUrl}}/{{urlPath}}/post/6368a5f8d2969c60b9a58f79

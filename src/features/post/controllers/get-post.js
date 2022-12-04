@@ -60,6 +60,27 @@ class Get {
       .status(StatusCodes.OK)
       .json({ message: "All posts with images ", posts });
   } //eof
+
+  async postsWithVideos(req, res) {
+    const { page } = req.params;
+    const skip = (parseInt(page) - 1) * PAGE_SIZE;
+    const limit = PAGE_SIZE * parseInt(page);
+    const newSkip = skip === 0 ? skip : skip + 1;
+    let posts = [];
+    const cachedPosts = await postCache.getPostsWithVideosFromCache(
+      "post",
+      newSkip,
+      limit
+    );
+    posts = cachedPosts.length
+      ? cachedPosts
+      : await postService.getPosts({ videoId: "$ne" }, skip, limit, {
+          createdAt: -1,
+        });
+    res
+      .status(StatusCodes.OK)
+      .json({ message: "All posts with videos", posts });
+  }
 } //eoc
 
 module.exports = Get;

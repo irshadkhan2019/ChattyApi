@@ -54,6 +54,13 @@ class PostRoutes {
       Get.prototype.postsWithImages
     );
 
+    //get posts with video
+    this.router.get(
+      "/post/videos/:page",
+      authMiddleware.checkAuthentication,
+      Get.prototype.postsWithVideos
+    );
+
     //delete post given postId
     this.router.delete(
       "/post/:postId",
