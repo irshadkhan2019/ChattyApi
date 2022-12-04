@@ -41,7 +41,7 @@ class Update {
     const postUpdated = await postCache.updatePostInCache(postId, updatedPost);
 
     const socketIOPostObject = getSocketServerInstance();
-    socketIOPostObject.emit("update post", postUpdated, "posts");
+    socketIOPostObject.emit("update post", postUpdated);
 
     //update in db
     postQueue.addPostJob("updatePostInDB", {
@@ -99,7 +99,7 @@ class Update {
     const postUpdated = await postCache.updatePostInCache(postId, updatedPost);
 
     const socketIOPostObject = getSocketServerInstance();
-    socketIOPostObject.emit("update post", postUpdated, "posts");
+    socketIOPostObject.emit("update post", postUpdated);
     postQueue.addPostJob("updatePostInDB", {
       postId: postId,
       // updatedPost: postUpdated,
@@ -131,7 +131,7 @@ class Update {
     const postUpdated = await postCache.updatePostInCache(postId, updatedPost);
 
     const socketIOPostObject = getSocketServerInstance();
-    socketIOPostObject.emit("update post", postUpdated, "posts");
+    socketIOPostObject.emit("update post", postUpdated);
     postQueue.addPostJob("updatePostInDB", {
       postId: postId,
       // updatedPost: postUpdated,

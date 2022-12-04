@@ -22,8 +22,8 @@ Accept: application/json
 withCredentials: true
 
 {
-  "username": "kaido",
-  "password": "newpassword"
+  "username": "asta",
+  "password": "password"
 }
 
 

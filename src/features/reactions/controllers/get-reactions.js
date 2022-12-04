@@ -1,6 +1,7 @@
 const reactionService = require("../../../shared/services/db/reaction.service");
 const ReactionCache = require("../../../shared/services/redis/reaction.cache");
 const { StatusCodes } = require("http-status-codes");
+const { default: mongoose } = require("mongoose");
 const reactionCache = new ReactionCache();
 
 class Get {

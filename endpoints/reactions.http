@@ -31,7 +31,7 @@ withCredentials: true
 {}
 
 ###Get all REACTIONS for a post
-GET  {{baseUrl}}/{{urlPath}}/post/reactions/6368a786d2969c60b9a58f81
+GET  {{baseUrl}}/{{urlPath}}/post/reactions/638042ef3a62550b4e3a5210
 Accept: application/json
 withCredentials: true
 

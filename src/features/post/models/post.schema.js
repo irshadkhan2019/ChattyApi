@@ -10,6 +10,8 @@ const postSchema = new mongoose.Schema({
   bgColor: { type: String, default: "" },
   imgVersion: { type: String, default: "" },
   imgId: { type: String, default: "" },
+  videoVersion: { type: String, default: "" },
+  videoId: { type: String, default: "" },
   feelings: { type: String, default: "" },
   gifUrl: { type: String, default: "" },
   privacy: { type: String, default: "" },
