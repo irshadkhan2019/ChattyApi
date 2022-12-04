@@ -9,6 +9,7 @@ const PostCache = require("../../../shared/services/redis/post.cache");
 const ObjectId = require("mongodb").ObjectId;
 const {
   uploads,
+  videoUpload,
 } = require("./../../../shared/globals/helpers/cloudinary-upload");
 const postCache = new PostCache();
 
@@ -119,6 +120,57 @@ class Create {
       .status(StatusCodes.CREATED)
       .json({ message: "Post Created  with Image Successfully" });
   } //EOF
+
+  async postWithVideo(req, res) {
+    const { post, bgColor, privacy, gifUrl, profilePicture, feelings, video } =
+      req.body;
+
+    const result = await videoUpload(video);
+
+    if (!result?.public_id) {
+      throw new BadRequestError(result.message);
+    }
+
+    const postObjectId = new ObjectId();
+    const createdPost = {
+      _id: postObjectId,
+      userId: req.currentUser?.userId,
+      username: req.currentUser?.username,
+      email: req.currentUser?.email,
+      avatarColor: req.currentUser?.avatarColor,
+      profilePicture,
+      post,
+      bgColor,
+      feelings,
+      privacy,
+      gifUrl,
+      commentsCount: 0,
+      imgVersion: "",
+      imgId: "",
+      videoId: result.public_id,
+      videoVersion: result.version.toString(),
+      createdAt: new Date(),
+      reactions: { like: 0, love: 0, happy: 0, sad: 0, wow: 0, angry: 0 },
+    };
+
+    const socketIOPostObject = getSocketServerInstance();
+    socketIOPostObject.emit("add post", createdPost);
+
+    await postCache.savePostToCache({
+      key: postObjectId,
+      currentUserId: `${req.currentUser?.userId}`,
+      uId: `${req.currentUser?.uId}`,
+      createdPost,
+    });
+
+    postQueue.addPostJob("addPostToDB", {
+      key: req.currentUser?.userId,
+      value: createdPost,
+    });
+    res
+      .status(StatusCodes.CREATED)
+      .json({ message: "Post created with video successfully" });
+  }
 } //EOC
 
 module.exports = Create;

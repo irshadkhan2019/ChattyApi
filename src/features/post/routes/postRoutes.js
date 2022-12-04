@@ -4,7 +4,11 @@ const Create = require("../controllers/create-post");
 const Delete = require("../controllers/delete-post");
 const Get = require("../controllers/get-post");
 const Update = require("../controllers/update-post");
-const { postSchema, postWithImageSchema } = require("../schemes/post.schemes");
+const {
+  postSchema,
+  postWithImageSchema,
+  postWithVideoSchema,
+} = require("../schemes/post.schemes");
 
 const validator = require("express-joi-validation").createValidator({});
 
@@ -26,6 +30,14 @@ class PostRoutes {
       validator.body(postWithImageSchema),
       authMiddleware.checkAuthentication,
       Create.prototype.postWithImage
+    );
+
+    //send posts with video
+    this.router.post(
+      "/post/video/post",
+      validator.body(postWithVideoSchema),
+      authMiddleware.checkAuthentication,
+      Create.prototype.postWithVideo
     );
 
     //get all posts

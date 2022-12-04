@@ -16,7 +16,7 @@ withCredentials: true
   "feelings": "sad"
 }
 
-###
+### Send image as post
 POST {{baseUrl}}/{{urlPath}}/post/image/post
 Content-Type: application/json
 Accept: application/json
@@ -32,6 +32,25 @@ withCredentials: true
   "image":"https://res.cloudinary.com/dnslnpn4l/image/upload/v1667630010/636603b7660fd48a850d800f.png"
 
 }
+
+
+### Send video as post
+POST {{baseUrl}}/{{urlPath}}/post/video/post
+Content-Type: application/json
+Accept: application/json
+withCredentials: true
+
+{
+  "post": "My 1st Video Post",
+  "bgColor": "#ffffff",
+  "privacy": "pubic",
+  "gifUrl": "",
+  "profilePicture": "https://res.cloudinary.com/dnslnpn4l/image/upload/v1667630010/636603b7660fd48a850d800f.png",
+  "feelings": "happy",
+  "video":""
+
+}
+
 
 ###GET ALL POSTS FROM CACHE/DB
 GET  {{baseUrl}}/{{urlPath}}/post/all/1 
