@@ -27,6 +27,8 @@ class PostCache extends BaseCache {
       imgId,
       reactions,
       createdAt,
+      videoId,
+      videoVersion,
     } = createdPost;
 
     const firstList = [
@@ -52,6 +54,10 @@ class PostCache extends BaseCache {
       `${privacy}`,
       "gifUrl",
       `${gifUrl}`,
+      "videoId",
+      `${videoId}`,
+      "videoVersion",
+      `${videoVersion}`,
     ];
 
     const secondList = [
@@ -267,6 +273,8 @@ class PostCache extends BaseCache {
       imgVersion,
       imgId,
       profilePicture,
+      videoId,
+      videoVersion,
     } = updatedPost;
     const firstList = [
       "post",
@@ -279,6 +287,10 @@ class PostCache extends BaseCache {
       `${privacy}`,
       "gifUrl",
       `${gifUrl}`,
+      "videoId",
+      `${videoId}`,
+      "videoVersion",
+      `${videoVersion}`,
     ];
     const secondList = [
       "profilePicture",
@@ -312,6 +324,33 @@ class PostCache extends BaseCache {
       throw new ServerError("Server error. Try again.");
     }
   }
-} //EOC
 
+  async getPostsWithVideosFromCache(key, start, end) {
+    try {
+      if (!this.client.isOpen) {
+        await this.client.connect();
+      }
+
+      const reply = await this.client.ZRANGE(key, start, end, { REV: true });
+      const multi = this.client.multi();
+      for (const value of reply) {
+        multi.HGETALL(`posts:${value}`);
+      }
+      const replies = await multi.exec();
+      const postWithVideos = [];
+      for (const post of replies) {
+        if (post.videoId && post.videoVersion) {
+          post.commentsCount = Helpers.parseJson(`${post.commentsCount}`);
+          post.reactions = Helpers.parseJson(`${post.reactions}`);
+          post.createdAt = new Date(Helpers.parseJson(`${post.createdAt}`));
+          postWithVideos.push(post);
+        }
+      }
+      return postWithVideos;
+    } catch (error) {
+      console.log(error);
+      throw new ServerError("Server error. Try again.");
+    }
+  } //EOC
+}
 module.exports = PostCache;
