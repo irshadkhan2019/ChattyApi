@@ -47,7 +47,7 @@ withCredentials: true
   "gifUrl": "",
   "profilePicture": "https://res.cloudinary.com/dnslnpn4l/image/upload/v1667630010/636603b7660fd48a850d800f.png",
   "feelings": "happy",
-  "video":""
+  "video":"<base64 video string>"
 
 }
 

@@ -2,6 +2,7 @@ const { StatusCodes } = require("http-status-codes");
 const { getSocketServerInstance } = require("../../../ioServerStore");
 const {
   uploads,
+  videoUpload,
 } = require("../../../shared/globals/helpers/cloudinary-upload");
 const {
   BadRequestError,
@@ -23,6 +24,8 @@ class Update {
       imgVersion,
       imgId,
       profilePicture,
+      videoId,
+      videoVersion,
     } = req.body;
 
     const { postId } = req.params;
@@ -35,6 +38,8 @@ class Update {
       imgVersion,
       imgId,
       profilePicture,
+      videoId: "",
+      videoVersion: "",
     };
 
     //update in cache
@@ -61,7 +66,7 @@ class Update {
       Update.prototype.updatePost(req);
     } else {
       //upload new image to an post not having image .
-      const result = await Update.prototype.addImageToExistingPost(req);
+      const result = await Update.prototype.addFileToExistingPost(req);
       if (!result.public_id) {
         throw new BadRequestError(result.message);
       }
@@ -69,6 +74,22 @@ class Update {
     res
       .status(StatusCodes.OK)
       .json({ message: "Post with image updated successfully" });
+  }
+
+  async postWithVideo(req, res) {
+    const { videoId, videoVersion } = req.body;
+
+    if (videoId && videoVersion) {
+      Update.prototype.updatePost(req);
+    } else {
+      const result = await Update.prototype.addFileToExistingPost(req);
+      if (!result.public_id) {
+        throw new BadRequestError(result.message);
+      }
+    }
+    res
+      .status(StatusCodes.OK)
+      .json({ message: "Post with video updated successfully" });
   }
 
   async updatePost(req) {
@@ -81,6 +102,8 @@ class Update {
       imgVersion,
       imgId,
       profilePicture,
+      videoId,
+      videoVersion,
     } = req.body;
 
     const { postId } = req.params;
@@ -94,12 +117,15 @@ class Update {
       profilePicture,
       imgId: imgId ? imgId : "",
       imgVersion: imgVersion ? imgVersion : "",
+      videoId: videoId ? videoId : "",
+      videoVersion: videoVersion ? videoVersion : "",
     };
 
     const postUpdated = await postCache.updatePostInCache(postId, updatedPost);
 
     const socketIOPostObject = getSocketServerInstance();
     socketIOPostObject.emit("update post", postUpdated);
+
     postQueue.addPostJob("updatePostInDB", {
       postId: postId,
       // updatedPost: postUpdated,
@@ -107,11 +133,22 @@ class Update {
     });
   } //eof
 
-  async addImageToExistingPost(req) {
-    const { post, bgColor, feelings, privacy, gifUrl, profilePicture, image } =
-      req.body;
+  async addFileToExistingPost(req) {
+    const {
+      post,
+      bgColor,
+      feelings,
+      privacy,
+      gifUrl,
+      profilePicture,
+      image,
+      video,
+    } = req.body;
+
     const { postId } = req.params;
-    const result = await uploads(image);
+
+    //upload video or image at cloudinary
+    const result = image ? await uploads(image) : await videoUpload(video);
 
     if (!result?.public_id) {
       return result;
@@ -126,6 +163,8 @@ class Update {
       profilePicture,
       imgId: image ? result.public_id : "",
       imgVersion: image ? result.version.toString() : "",
+      videoId: video ? result.public_id : "",
+      videoVersion: video ? result.version.toString() : "",
     };
 
     const postUpdated = await postCache.updatePostInCache(postId, updatedPost);
@@ -139,11 +178,13 @@ class Update {
     });
 
     //call image queue to add POST image to mongodb db
-    imageQueue.addImageJob("addImageToDB", {
-      userId: `${req.currentUser?.userId}`,
-      imgId: result.public_id,
-      imgVersion: result.version.toString(),
-    });
+    if (image) {
+      imageQueue.addImageJob("addImageToDB", {
+        userId: `${req.currentUser?.userId}`,
+        imgId: result.public_id,
+        imgVersion: result.version.toString(),
+      });
+    }
 
     return result;
   }

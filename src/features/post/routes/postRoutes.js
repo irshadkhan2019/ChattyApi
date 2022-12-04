@@ -76,6 +76,14 @@ class PostRoutes {
       authMiddleware.checkAuthentication,
       Update.prototype.postWithImage
     );
+
+    //update post with video given id
+    this.router.put(
+      "/post/video/:postId",
+      validator.body(postWithVideoSchema),
+      authMiddleware.checkAuthentication,
+      Update.prototype.postWithVideo
+    );
     return this.router;
   }
 }
