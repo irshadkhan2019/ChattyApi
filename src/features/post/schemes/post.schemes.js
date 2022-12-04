@@ -51,4 +51,4 @@ const postWithVideoSchema = Joi.object().keys({
   videoId: Joi.string().optional().allow(null, ""),
 });
 
-module.exports = { postSchema, postWithImageSchema };
+module.exports = { postSchema, postWithImageSchema, postWithVideoSchema };
