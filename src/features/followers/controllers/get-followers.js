@@ -13,7 +13,7 @@ class Get {
     );
     const following = cachedFollowees.length
       ? cachedFollowees
-      : await followerService.getFolloweeData(userObjectId);
+      : await followerService.getFolloweedata(userObjectId);
     res.status(StatusCodes.OK).json({ message: "User following", following });
   }
 

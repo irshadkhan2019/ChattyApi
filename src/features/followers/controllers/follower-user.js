@@ -3,8 +3,8 @@ const { mongoose } = require("mongoose");
 const { StatusCodes } = require("http-status-codes");
 const FollowerCache = require("../../../shared/services/redis/follower.cache");
 const UserCache = require("../../../shared/services/redis/user.cache");
-const { socketIOFollowerObject } = require("../../../shared/sockets/follower");
 const followerQueue = require("../../../shared/services/queues/follower.queue");
+const { getSocketServerInstance } = require("../../../ioServerStore");
 
 const followerCache = new FollowerCache();
 const userCache = new UserCache();
@@ -40,7 +40,8 @@ class Add {
     const addFolloweeData = Add.prototype.userData(response[0]); //followedTo user
 
     //sending logged in user data  via socket conn abt whom he followed.
-    // socketIOFollowerObject.emit("add follower", addFolloweeData);
+    const socketIOFollowerObject = getSocketServerInstance();
+    socketIOFollowerObject.emit("add follower", addFolloweeData);
 
     //following:loggedinUserId->[user1,user2..] i.e logged in users is following user1,user2 ,...
     const addFollowerToCache = followerCache.saveFollowerToCache(

@@ -5,16 +5,19 @@
   "main": "app.js",
   "scripts": {
     "dev": "nodemon src/app.js --trace-warnings",
-    "test": "jest --coverage=true -w=1 --forceExit --detectOpenHandles --watchAll=false"
+    "test": "jest --coverage=true -w=1 --forceExit --detectOpenHandles --watchAll=false",
+    "seeds:dev": "node src/seeds.js"
   },
   "author": "khanirshad",
   "license": "ISC",
   "dependencies": {
     "@bull-board/express": "^4.6.2",
+    "@faker-js/faker": "^7.6.0",
     "@sendgrid/mail": "^7.7.0",
     "@socket.io/redis-adapter": "^7.2.0",
     "bcryptjs": "^2.4.3",
     "bull": "^4.10.1",
+    "canvas": "^2.10.2",
     "cloudinary": "^1.32.0",
     "compression": "^1.7.4",
     "cookie-session": "^2.0.0",
