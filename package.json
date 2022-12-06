@@ -4,9 +4,13 @@
   "description": "",
   "main": "app.js",
   "scripts": {
+    "start": "pm2 start src/app.js -i 4 --attach --watch",
+    "stop": "pm2 stop all",
+    "delete": "pm2 delete all",
     "dev": "nodemon src/app.js --trace-warnings",
     "test": "jest --coverage=true -w=1 --forceExit --detectOpenHandles --watchAll=false",
-    "seeds:dev": "node src/seeds.js"
+    "seeds:dev": "node src/seeds.js",
+    "seeds:prod": "node src/seeds.js"
   },
   "author": "khanirshad",
   "license": "ISC",
