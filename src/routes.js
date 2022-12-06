@@ -11,6 +11,7 @@ const notificationRoutes = require("./features/notifications/routes/notification
 const imageRoutes = require("./features/images/routes/imageRoutes");
 const chatRoutes = require("./features/chat/routes/chatRoutes");
 const userRoutes = require("./features/user/routes/userRoutes");
+const healthRoutes = require("./features/user/routes/healthRoutes");
 
 const BASE_PATH = "/api/v1";
 const applicationRoutes = (app) => {
@@ -18,6 +19,11 @@ const applicationRoutes = (app) => {
     app.use("/queues", serverAdapter.getRouter()); //GUI FOR QUEUES JOBS
     app.use(BASE_PATH, authRoutes.signoutRoute());
     app.use(BASE_PATH, authRoutes.routes());
+    app.use("", healthRoutes.health());
+    app.use("", healthRoutes.env());
+    app.use("", healthRoutes.instance());
+    app.use("", healthRoutes.fiboRoutes());
+
     app.use(BASE_PATH, authMiddleware.verifyUser, currentUserRoutes.routes());
     app.use(BASE_PATH, authMiddleware.verifyUser, postRoutes.routes());
     app.use(BASE_PATH, authMiddleware.verifyUser, reactionRoutes.routes());

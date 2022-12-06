@@ -19,6 +19,7 @@ class Config {
     this.SENDER_EMAIL_PASSWORD = process.env.SENDER_EMAIL_PASSWORD;
     this.SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
     this.SENDGRID_SENDER = process.env.SENDGRID_SENDER;
+    this.EC2_URL = process.env.EC2_URL;
   }
 
   validateConfig() {
