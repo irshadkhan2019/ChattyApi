@@ -49,11 +49,11 @@ class Application {
   static shutDownProperly(exitCode) {
     Promise.resolve()
       .then(() => {
-        log.info("Shutdown complete");
+        console.log("Shutdown complete");
         process.exit(exitCode);
       })
       .catch((error) => {
-        log.error(`Error during shutdown: ${error}`);
+        console.log(`Error during shutdown: ${error}`);
         process.exit(1);
       });
   }

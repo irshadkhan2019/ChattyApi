@@ -19,6 +19,7 @@ const {
 } = require("./shared/sockets/notification");
 const { setSocketServerInstance } = require("./ioServerStore");
 const { SocketIOChatHandler } = require("./shared/sockets/chat");
+const apiStats = require("swagger-stats");
 
 const SERVER_PORT = 5000;
 
@@ -31,6 +32,7 @@ class ChattyServer {
     this.securityMiddleware(this.app);
     this.standardMiddleware(this.app);
     this.routesMiddleware(this.app);
+    this.apiMonitoring(this.app);
     this.globalErrorHandler(this.app);
     this.startServer(this.app);
   }
@@ -65,6 +67,15 @@ class ChattyServer {
   routesMiddleware(app) {
     applicationRoutes(app);
     console.log("Routes setup done!");
+  }
+
+  apiMonitoring(app) {
+    app.use(
+      apiStats.getMiddleware({
+        uriPath: "/api-monitoring",
+      })
+    );
+    console.log("monitoring api ....");
   }
   globalErrorHandler(app) {
     //for unknow urls
