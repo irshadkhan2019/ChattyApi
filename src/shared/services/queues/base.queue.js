@@ -6,6 +6,7 @@ const { config } = require("../../../config");
 
 let bullAdapters = [];
 let serverAdapter = new ExpressAdapter();
+serverAdapter.setBasePath("/queues");
 
 class BaseQueue {
   constructor(queueName) {
@@ -17,11 +18,12 @@ class BaseQueue {
         password: config.REDIS_PASSWORD,
       },
     });
+
     //for BULL UI dashboard access
     bullAdapters.push(new BullAdapter(this.queue));
     bullAdapters = [...new Set(bullAdapters)];
-    serverAdapter = new ExpressAdapter();
-    serverAdapter.setBasePath("/queues");
+    // serverAdapter = new ExpressAdapter();
+    // serverAdapter.setBasePath("/queues");
 
     createBullBoard({
       queues: bullAdapters,
@@ -54,7 +56,7 @@ class BaseQueue {
   //method to process Job from queue ,the callback fn does the processing .
   //takes concurrency no of jobs to process at a time
   processJob(name, concurrency, callback) {
-    //callback fn is called by passing the job and done callnack fn to it .
+    //callback fn is called by passing the job and done callback fn to it .
     this.queue.process(name, concurrency, callback);
   }
 }

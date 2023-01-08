@@ -19,14 +19,15 @@ class SignIn {
     const existingUser = await authService.getAuthUserByUsername(username);
 
     if (!existingUser) {
-      return next(new BadRequestError("Invalid Credentials"));
+      return next(new BadRequestError("Invalid Credentials,check again"));
     }
 
     const passwordMatch = await existingUser.comparePassword(password);
 
     if (!passwordMatch) {
-      return next(new BadRequestError("Invalid Credentials"));
+      return next(new BadRequestError("Invalid Credentials ,incorrect pass"));
     }
+
     //get user Id
     const user = await userService.getUserByAuthId(`${existingUser._id}`);
     //if above all validation success generate jwt
@@ -44,6 +45,7 @@ class SignIn {
 
     //create session
     req.session = { jwt: userJwt };
+    console.log("session created", req.session);
 
     const userDocument = {
       ...user,
@@ -54,34 +56,6 @@ class SignIn {
       avatarColor: existingUser?.avatarColor,
       createdAt: existingUser?.createdAt,
     };
-
-    // //forgotpass test
-    // const resetLink = `${config.CLIENT_URL}/reset-password?token=128761uy8sdhg2tdshdg624gh`;
-    // const template = forgotPasswordTemplate.passwordResetTemplate(
-    //   existingUser.username,
-    //   resetLink
-    // );
-
-    // emailQueue.addEmailJob("forgotPasswordEmail", {
-    //   template,
-    //   receiverEmail: "daniela.bailey21@ethereal.email",
-    //   subject: "Reset your password",
-    // });
-
-    //resetPass test
-    // const templateParams = {
-    //   username: existingUser.username,
-    //   email: existingUser.email,
-    //   ipaddress: ip.address(),
-    //   date: moment().format("DD/MM/YYYY HH:mm"),
-    // };
-    // const template =
-    //   resetPasswordTemplate.passwordResetConfirmationTemplate(templateParams);
-    // emailQueue.addEmailJob("forgotPasswordEmail", {
-    //   template,
-    //   receiverEmail: "daniela.bailey21@ethereal.email",
-    //   subject: "Password reset Confirmation",
-    // });
 
     //send res
     res.status(StatusCodes.OK).json({

@@ -64,6 +64,7 @@ class ChattyServer {
     app.use(express.json({ limit: "50mb" }));
     app.use(express.urlencoded({ extended: true, limit: "50mb" }));
   }
+
   routesMiddleware(app) {
     applicationRoutes(app);
     console.log("Routes setup done!");
@@ -77,11 +78,12 @@ class ChattyServer {
     );
     console.log("monitoring api ....");
   }
+
   globalErrorHandler(app) {
     //for unknow urls
     app.all("*", (req, res) => {
       res.status(StatusCodes.NOT_FOUND).json({
-        message: `${req.originalUrl} Not Found`,
+        message: `${req.originalUrl} Not Found,try something else`,
       });
     });
 
@@ -137,12 +139,14 @@ class ChattyServer {
     io.adapter(redisAdapter.createAdapter(pubClient, subClient));
     return io;
   }
+
   startHTTPServer(http) {
     console.log("Starting server");
     http.listen(SERVER_PORT, () => {
       console.log(`Server running on port ${SERVER_PORT}`);
     });
   }
+
   socketIOConnections(io) {
     setSocketServerInstance(io); //for services to access io object
 

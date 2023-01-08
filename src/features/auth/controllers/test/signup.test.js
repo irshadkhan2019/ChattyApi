@@ -5,7 +5,6 @@ const {
 const SignUp = require("./../signup");
 const { StatusCodes } = require("http-status-codes");
 
-// const root = "./../../../../../src/";
 jest.mock(`./../../../../../src/shared/services/queues/base.queue`);
 jest.mock(`./../../../../../src/shared/services/redis/user.cache`);
 jest.mock(`./../../../../../src/shared/services/queues/user.queue`);
@@ -29,8 +28,10 @@ describe("signUp", () => {
     const res = authMockResponse();
 
     SignUp.prototype.create(req, res).catch((err) => {
-      console.log(err);
-      expect(err.statusCode).toEqual(StatusCodes.BAD_REQUEST);
+      expect(err.statusCode).toEqual(400);
+      expect(err.serializeErrors().message).toEqual(
+        "Username is a required field"
+      );
     });
   });
 });

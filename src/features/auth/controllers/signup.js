@@ -16,6 +16,7 @@ const JWT = require("jsonwebtoken");
 const { config } = require("../../../config");
 
 const userCache = new UserCache();
+
 class SignUp {
   async create(req, res, next) {
     console.log(req.body);

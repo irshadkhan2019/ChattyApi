@@ -12,6 +12,7 @@ const { config } = require("../../../config");
 const emailQueue = require("../../../shared/services/queues/email.queue");
 
 class Password {
+  //reset password
   async create(req, res, next) {
     const { email } = req.body;
     const existingUser = await authService.getAuthUserByEmail(email);
@@ -21,7 +22,9 @@ class Password {
     }
 
     const randomBytes = await Promise.resolve(crypto.randomBytes(20));
+
     const randomTokenCharacters = randomBytes.toString("hex");
+
     await authService.updatePasswordToken(
       `${existingUser._id}`,
       randomTokenCharacters,
@@ -46,7 +49,7 @@ class Password {
 
     res.status(StatusCodes.OK).json({ message: "Password reset email sent." });
   }
-  //
+  //Update password via reset
   async update(req, res, next) {
     const { password, confirmPassword } = req.body;
     const { token } = req.params;

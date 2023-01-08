@@ -20,7 +20,7 @@ class AuthMiddleware {
 
   checkAuthentication(req, res, next) {
     if (!req.currentUser) {
-      throw NotAuthorizedError("Authentication required!");
+      throw new NotAuthorizedError("Authentication required!");
     }
     next();
   }

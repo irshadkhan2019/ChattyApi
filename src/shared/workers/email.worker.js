@@ -8,7 +8,7 @@ class EmailWorker {
     try {
       const { template, receiverEmail, subject } = job.data;
 
-      //add method to send data to DB
+      //add method to send email
       await mailTransport.sendEmail(receiverEmail, subject, template);
 
       job.progress(100);

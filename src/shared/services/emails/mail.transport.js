@@ -37,7 +37,7 @@ class MailTransport {
       console.log("Development email sent successfully.");
     } catch (error) {
       console.log("Error sending email", error);
-      throw new BadRequestError("Error sending email");
+      return new BadRequestError("Error sending email");
     }
   }
 

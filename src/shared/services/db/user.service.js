@@ -18,7 +18,7 @@ class UserService {
           // like populate it returns array containing all fields
           //from Auth model which have id same as users authId and
           // that array will be named as authId
-          from: "Auth",
+          from: "auths",
           localField: "authId",
           foreignField: "_id",
           as: "authId",
@@ -35,19 +35,19 @@ class UserService {
   async getUserByAuthId(authId) {
     const users = await UserModel.aggregate([
       { $match: { authId: new mongoose.Types.ObjectId(authId) } },
-      // {
-      //   $lookup: {
-      //     from: "Auth",
-      //     localField: "authId",
-      //     foreignField: "_id",
-      //     as: "authId",
-      //   },
-      // },
-      // { $unwind: "$authId" },
-      // { $project: this.aggregateProject() },
+      {
+        $lookup: {
+          from: "auths",
+          localField: "authId",
+          foreignField: "_id",
+          as: "authId",
+        },
+      },
+      { $unwind: "$authId" },
+      { $project: this.aggregateProject() },
     ]);
 
-    console.log("From user service ", authId, users);
+    console.log(" user service getUserByAuthId ", authId, users);
     return users[0];
   }
 
@@ -60,7 +60,7 @@ class UserService {
       { $sort: { createdAt: -1 } },
       {
         $lookup: {
-          from: "Auth",
+          from: "auths",
           localField: "authId",
           foreignField: "_id",
           as: "authId",
@@ -83,7 +83,7 @@ class UserService {
       { $match: { _id: { $ne: new mongoose.Types.ObjectId(userId) } } },
       {
         $lookup: {
-          from: "Auth",
+          from: "auths",
           localField: "authId",
           foreignField: "_id",
           as: "authId",

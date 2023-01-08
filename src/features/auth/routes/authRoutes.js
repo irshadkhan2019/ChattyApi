@@ -20,6 +20,7 @@ class AuthRoutes {
       validator.body(signupSchema),
       SignUp.prototype.create
     );
+
     this.router.post(
       "/signin",
       validator.body(loginSchema),

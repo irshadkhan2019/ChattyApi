@@ -22,7 +22,7 @@ Accept: application/json
 withCredentials: true
 
 {
-  "username": "asta",
+  "username": "astsa",
   "password": "password"
 }
 
@@ -46,16 +46,16 @@ Accept: application/json
 withCredentials: true
 
 {
-  "email":"Izuku@gmail.com"
+  "email":"asta@gmail.com"
 }
 
 ###
-POST {{baseUrl}}/{{urlPath}}/reset-password/fd75c410e33a234eb21edbaa09c8e8c239adb628
+POST {{baseUrl}}/{{urlPath}}/reset-password/9e4f58835bbf35d608d795902d699388d6c64ee4
 Content-Type: application/json
 Accept: application/json
 withCredentials: true
 
 {
-  "password":"newpass",
-  "confirmPassword":"newpass"
+  "password":"password",
+  "confirmPassword":"password"
 }
