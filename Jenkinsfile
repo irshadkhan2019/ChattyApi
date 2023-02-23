@@ -6,6 +6,10 @@ pipeline {
     choice(name: 'VERSION', choices: ['1.0','1.1','1.2'],description: '')
     booleanParam(name: 'executeTests',defaultValue: true ,description: '')
   }
+  tools {
+    nodejs  'my-nodejs'
+  }
+
   stages {
     
    stage("init") {
@@ -16,10 +20,18 @@ pipeline {
       }
     }
     
-    stage("build") {
+    stage("build app") {
       steps {
            script {
-             gv.buildApp()
+             gv.buildJar()
+        }
+      }
+    }
+
+       stage("build image") {
+      steps {
+           script {
+             gv.buildImage()
         }
       }
     }
@@ -41,10 +53,7 @@ pipeline {
     stage("deploy") {
       steps {
         script {
-          env.ENV=input message: "Select the environment to deploy to",ok: "Done",parameters:[choice(name: 'VERSION', choices: ['dev','stage','prod'],description: '')]
-          
-          gv.deployApp()
-          echo "Deploying to ${ENV}"
+         gv.deployApp()
         }
       }
     }
