@@ -41,7 +41,7 @@ class Add {
     //if sender sends image in chat
     if (selectedImage.length) {
       const result = await uploads(
-        req.body.image,
+        req.body.selectedImage,
         req.currentUser?.userId,
         true,
         true
