@@ -6,6 +6,7 @@ const userService = require("../../../shared/services/db/user.service");
 const FollowerCache = require("../../../shared/services/redis/follower.cache");
 const PostCache = require("../../../shared/services/redis/post.cache");
 const UserCache = require("../../../shared/services/redis/user.cache");
+const postService = require("../../../shared/services/db/post.service");
 
 const postCache = new PostCache();
 const userCache = new UserCache();

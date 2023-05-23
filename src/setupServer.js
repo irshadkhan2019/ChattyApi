@@ -20,6 +20,7 @@ const {
 const { setSocketServerInstance } = require("./ioServerStore");
 const { SocketIOChatHandler } = require("./shared/sockets/chat");
 const apiStats = require("swagger-stats");
+const { SocketIORoomHandler } = require("./shared/sockets/room");
 
 const SERVER_PORT = 5000;
 
@@ -153,6 +154,7 @@ class ChattyServer {
     const postSocketHandler = new SocketIOPostHandler(io);
     const followerSocketHandler = new SocketIOFollowerHandler(io);
     const userSocketHandler = new SocketIOUserHandler(io);
+    const roomSocketHandler = new SocketIORoomHandler(io);
     const notificationSocketHandler = new SocketIONotificationHandler();
     const chatSocketHandler = new SocketIOChatHandler(io);
     postSocketHandler.listen();
@@ -160,6 +162,7 @@ class ChattyServer {
     userSocketHandler.listen();
     notificationSocketHandler.listen(io);
     chatSocketHandler.listen();
+    roomSocketHandler.listen();
   }
 }
 
