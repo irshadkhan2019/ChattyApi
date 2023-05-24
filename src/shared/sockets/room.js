@@ -49,7 +49,7 @@ class SocketIORoomHandler {
       roomId: userId,
     };
 
-    activeRooms.push([...activeRooms, newActiveRoom]);
+    activeRooms.push(newActiveRoom);
     return newActiveRoom;
   }
 
