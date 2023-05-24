@@ -25,6 +25,11 @@ class SocketIORoomHandler {
         console.log("room-leave event", user.profile._id, roomId);
         this.roomLeaveHandler(socket, user, roomId);
       });
+
+      //when page reloads user request for active rooms to display
+      socket.on("get-active-room", () => {
+        this.updateRooms();
+      });
     });
   }
 
