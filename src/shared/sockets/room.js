@@ -1,3 +1,5 @@
+const { cloneDeep } = require("lodash");
+
 let roomObject;
 let activeRooms = [];
 
@@ -18,8 +20,21 @@ class SocketIORoomHandler {
         console.log("room-join event", user, roomId);
         this.roomJoinHandler(socket, user, roomId);
       });
+      // when user send a req/event to leave
+      socket.on("room-leave", ({ user, roomId }) => {
+        console.log("room-leave event", user.profile._id, roomId);
+        this.roomLeaveHandler(socket, user, roomId);
+      });
     });
   }
+
+  roomLeaveHandler = (socket, user, roomId) => {
+    const ActiveRoom = this.getActiveRoom(roomId);
+
+    this.leaveActiveRoom(roomId, socket.id);
+    // send rooms with updated participants
+    this.updateRooms();
+  };
 
   roomJoinHandler = (socket, user, roomId) => {
     const participantDetails = {
@@ -106,6 +121,32 @@ class SocketIORoomHandler {
 
     activeRooms.push(updatedRoom);
     console.log("adding room to activeRooms", activeRooms);
+  };
+
+  leaveActiveRoom = (roomId, participantSocketId) => {
+    const activeRoom = activeRooms.find((room) => room.roomId === roomId);
+
+    if (activeRoom) {
+      const cloneActiveRoom = cloneDeep(activeRoom);
+      // remove the participant from participant list
+      cloneActiveRoom.participants = cloneActiveRoom.participants.filter(
+        (participant) => participant.socketId !== participantSocketId
+      );
+      console.log("removing participant from activeRooms", cloneActiveRoom);
+
+      //remove the current room
+      activeRooms = activeRooms.filter((room) => room.roomId !== roomId);
+
+      // add the clone room with 1 less participant
+      if (cloneActiveRoom.participants.length >= 1) {
+        activeRooms.push(cloneActiveRoom);
+
+        console.log(
+          "adding room to activeRooms with 1 less partitcipant",
+          activeRooms
+        );
+      }
+    }
   };
 }
 
