@@ -13,8 +13,28 @@ class SocketIORoomHandler {
         console.log("room-create event", user);
         this.roomCreateHandler(socket, user);
       });
+      // when user send a req/event to join
+      socket.on("room-join", ({ user, roomId }) => {
+        console.log("room-join event", user, roomId);
+        this.roomJoinHandler(socket, user, roomId);
+      });
     });
   }
+
+  roomJoinHandler = (socket, user, roomId) => {
+    const participantDetails = {
+      userId: user.profile._id,
+      socketId: socket.id,
+    };
+    console.log("participantDetails who want to join", participantDetails);
+
+    const roomDetails = this.getActiveRoom(roomId);
+
+    this.joinActiveRoom(roomId, participantDetails);
+
+    // send rooms with updated participants
+    this.updateRooms();
+  };
 
   roomCreateHandler = (socket, user) => {
     const socketId = socket.id;
@@ -63,6 +83,29 @@ class SocketIORoomHandler {
         activeRooms,
       });
     }
+  };
+
+  getActiveRoom = (roomId) => {
+    const activeRoom = activeRooms.find((room) => room.roomId === roomId);
+    return activeRoom;
+  };
+
+  joinActiveRoom = (roomId, newParticipant) => {
+    const room = activeRooms.find((room) => room.roomId === roomId);
+
+    console.log("Old activeRooms", activeRooms);
+    activeRooms = activeRooms.filter((room) => room.roomId !== roomId);
+
+    console.log("Room participantDetails want to join", room);
+    console.log("removing room from activeRooms", activeRooms);
+    // add participant in the room
+    const updatedRoom = {
+      ...room,
+      participants: [...room.participants, newParticipant],
+    };
+
+    activeRooms.push(updatedRoom);
+    console.log("adding room to activeRooms", activeRooms);
   };
 }
 
