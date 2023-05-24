@@ -27,7 +27,10 @@ class SocketIORoomHandler {
     socket.emit("room-create", {
       roomDetails,
     });
-    console.log(activeRooms);
+
+    // send update room emit to all users
+    this.updateRooms();
+    // console.log(activeRooms);
   };
 
   addNewActiveRoom(userId, socketId) {
@@ -49,6 +52,18 @@ class SocketIORoomHandler {
     activeRooms.push([...activeRooms, newActiveRoom]);
     return newActiveRoom;
   }
+
+  updateRooms = (targetId = null) => {
+    if (targetId) {
+      this.io.to(targetId).emit("active-rooms", {
+        activeRooms,
+      });
+    } else {
+      this.io.emit("active-rooms", {
+        activeRooms,
+      });
+    }
+  };
 }
 
 module.exports = { SocketIORoomHandler, roomObject };
