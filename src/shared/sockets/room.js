@@ -52,6 +52,16 @@ class SocketIORoomHandler {
 
     this.joinActiveRoom(roomId, participantDetails);
 
+    //send information to users in room that they should prepare for incoming connection
+    roomDetails.participants.forEach(participant => {
+      if(participant.socketId !==participantDetails.socketId){
+      socket.to(participant.socketId).emit('conn-prepare',{
+        //send our socket id info to all other participants in room
+          conUserSocketId:participantDetails.socketId,
+       })
+     }
+    });
+
     // send rooms with updated participants
     this.updateRooms();
   };
