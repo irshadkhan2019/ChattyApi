@@ -30,7 +30,20 @@ class SocketIORoomHandler {
       socket.on("get-active-room", () => {
         this.updateRooms();
       });
+
+      //when non initiator is ready for connection
+      socket.on("conn-init", (data) => {
+        this.roomInitializeConnectionHandler(socket,data)
+      });
     });
+  }
+
+  roomInitializeConnectionHandler=(socket,data)=>{
+    //send info to conUserSocketId user that other users have prepared ,and now he can initialize conn
+      const {conUserSocketId}=data;
+      //socket.id is id of non initializer user who was already in room and emmiter conn-init event 
+      const initData={conUserSocketId:socket.id}
+      socket.to(conUserSocketId).emit('conn-init',initData)
   }
 
   roomLeaveHandler = (socket, user, roomId) => {
