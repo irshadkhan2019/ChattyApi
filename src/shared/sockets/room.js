@@ -35,7 +35,18 @@ class SocketIORoomHandler {
       socket.on("conn-init", (data) => {
         this.roomInitializeConnectionHandler(socket,data)
       });
+      socket.on("conn-signal", (data) => {
+        this.roomSignalingDataHandler(socket,data)
+      });
+
     });
+  }
+
+  roomSignalingDataHandler=(socket,data)=>{
+      const {conUserSocketId,signal}=data;
+      //socket.id gives from whom this signal is coming 
+      const signalingData={signal,conUserSocketId:socket.id,}
+      socket.to(conUserSocketId).emit('conn-signal',signalingData);
   }
 
   roomInitializeConnectionHandler=(socket,data)=>{
